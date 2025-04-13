@@ -8,8 +8,10 @@ import MainPage from './mainPage';
 import Item from './item';
 import ItemList from './itemslist';
 import AddItem from './addItem';
-import ProductDetails from './ProductDetails';
+import ProductDetails from './ProductDetails/ProductDetails';
 import Categories from './home/categories';
+import RentalOption from './rentaloption';
+import ButtonClick from '../src/buttonClick'
 
 
 
@@ -40,13 +42,16 @@ const App = () => {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/addItem" element={<AddItem />} />
-        <Route path="/productDetails" element={<ProductDetails />} />
+        <Route path="/itemlist/product/:productId" element={<ProductDetails />} />
         <Route path="/categories" element={<Categories />} />
+        <Route path="/profile/:RouteuserId" element={<ProfilePage MyProfile = "false" />} />
         {/* Protected Routes */}
         <Route path="/" element={<ProtectedRoute element={<MainPage />} />} />
-         <Route path="/itemlist" element={<ProtectedRoute element={<ItemList />} />} />
-        <Route path="/profile" element={<ProtectedRoute element={<ProfilePage />} />} />
-
+         <Route path="/itemlist" element={<ItemList />}  />
+         <Route path="/itemlist/:categoryRoute"  element={<ItemList />}/>
+        <Route path="/profile" element={<ProtectedRoute element={<ProfilePage MyProfile = "true" />} />} />
+        <Route path="/rental" element={<RentalOption />} />
+        <Route path="/button" element={<ButtonClick />}  />
         {/* Redirect unknown paths */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

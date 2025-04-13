@@ -17,25 +17,34 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { useParams } from "react-router-dom";
+
 
 const auth = getAuth();
 const db = getFirestore();
 
-export default function ProfilePage() {
+export default function ProfilePage({MyProfile}) {
   const [profile, setProfile] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editedProfile, setEditedProfile] = useState(null);
   const [userId, setUserId] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
 
+
+  const { RouteuserId } = useParams();
+  console.log(RouteuserId);
   // Fetch user data
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUserId(user.uid);
-        const userDoc = await getDoc(doc(db, "users", user.uid));
+        const targetUserId = RouteuserId || user.uid;
+        console.log(user.uid);
+        console.log(RouteuserId);
+        const userDoc = await getDoc(doc(db, "users", targetUserId));
         if (userDoc.exists()) {
           setProfile(userDoc.data());
+          console.log(profile);
         } else {
           console.error("No user data found in Firestore");
         }
@@ -178,14 +187,16 @@ export default function ProfilePage() {
                 </Button>
               </div>
             ) : (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleEditClick}
-                className="text-white hover:bg-white/20 rounded-full"
-              >
-                <Edit className="h-5 w-5" />
-              </Button>
+              (MyProfile === "true" )&& (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleEditClick}
+                  className="text-white hover:bg-white/20 rounded-full"
+                >
+                  <Edit className="h-5 w-5" />
+                </Button>
+              )
             )}
           </div>
 
@@ -199,7 +210,7 @@ export default function ProfilePage() {
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
-              <label
+          { (MyProfile === "true") && (   <label
   htmlFor="file-upload"
   className="absolute bottom-2 right-2 bg-white/90 backdrop-blur-md p-2 rounded-full shadow-lg cursor-pointer transition-all duration-300 hover:bg-gray-100 hover:shadow-xl"
 >
@@ -212,7 +223,7 @@ export default function ProfilePage() {
     onChange={handleImageUpload}
     disabled={isUploading}
   />
-</label>
+</label>)}
 
             </div>
 

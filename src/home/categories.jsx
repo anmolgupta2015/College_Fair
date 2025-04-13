@@ -23,7 +23,7 @@ export default function Categories() {
     { name: "Accessories", icon: Backpack, count: 112 },
     { name: "Transportation", icon: Bicycle, count: 45 },
     { name: "Food & Drinks", icon: Coffee, count: 67 },
-    { name: "Miscellaneous", icon: Gift, count: 93 },
+    { name: "misc", icon: Gift, count: 93 },
   ];
 
   return (
@@ -42,7 +42,7 @@ export default function Categories() {
             return (
               <Link
                 key={category.name}
-                to={`/category/${category.name.toLowerCase().replace(/\s+/g, "-")}`}
+                to={`/itemlist/${category.name.toLowerCase().replace(/\s+/g, "-")}`}
                 className="flex flex-col items-center justify-center p-6 bg-white/10 rounded-xl border border-white/20
                 hover:bg-white/20 transition-all duration-300 text-white shadow-md"
               >
