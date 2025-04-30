@@ -34,7 +34,7 @@ export default function AboutUs() {
     e.preventDefault();
     
     try{
-      const response = await fetch("http://localhost:5000/send-query-email",{
+      const response = await fetch("https://college-fair.onrender.com/send-query-email",{
         method : "POST",
         headers:{
           "Content-Type": "application/json",
