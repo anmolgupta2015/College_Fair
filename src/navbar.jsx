@@ -150,7 +150,7 @@ const Navbar = () => {
                     Sign In
                   </NavLink>
                   <NavLink
-                    to="/register"
+                    to="/signup"
                     className="px-3 py-1.5 text-sm font-medium text-white bg-gray-800 rounded-md hover:bg-gray-700 transition-colors duration-200"
                     aria-label="Register"
                   >
