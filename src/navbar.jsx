@@ -272,7 +272,7 @@ const Navbar = () => {
                   Sign In
                 </NavLink>
                 <NavLink
-                  to="/register"
+                  to="/signup"
                   className="block px-3 py-2 rounded text-base font-medium text-white bg-gray-800 hover:bg-gray-700"
                 >
                   Register
