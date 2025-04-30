@@ -16,10 +16,10 @@ export default function ProductListPage() {
   const [loading, setLoading] = useState(true)
 
   const { categoryRoute } = useParams()
-  console.log(categoryRoute)
+ // console.log(categoryRoute)
   useEffect(() => {
     if (categoryRoute) {
-      console.log(categoryRoute)
+     // console.log(categoryRoute)
       setCategoryFilter(categoryRoute)
     } else {
       setCategoryFilter("All")
@@ -59,7 +59,7 @@ export default function ProductListPage() {
           ),
         ]
 
-        console.log("User IDs to fetch:", userIds) // Debug to check userIds
+      //  console.log("User IDs to fetch:", userIds) // Debug to check userIds
 
         await fetchUsers(userIds) // Fetch corresponding user names
 
@@ -104,6 +104,8 @@ export default function ProductListPage() {
     const matchesCategory = categoryFilter === "All" || product.category === categoryFilter
     return matchesSearch && matchesCategory
   })
+
+   console.log(filteredProducts);
 
   if (loading) {
     return <p className="text-center mt-12 text-lg">Loading products...</p>
@@ -165,9 +167,10 @@ export default function ProductListPage() {
             {filteredProducts.map((product) => (
               <div
                 key={product.id}
+               
                 className={`bg-white rounded-lg shadow overflow-hidden hover:shadow-md transition-shadow duration-300 ${
-                  product.isRentable ? "border-2 border-purple-400" : ""
-                } ${product.isDonation ? "border-2 border-green-400" : ""}`}
+                  product.listingType == "rent" ? "border-2 border-purple-400" : ""
+                } ${product.listingType == "donate" ? "border-2 border-green-400" : ""}`}
                 onClick={() => setSelectedProductId(product.id)}
               >
                 <div className="relative">
@@ -179,13 +182,13 @@ export default function ProductListPage() {
                   <button className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow hover:bg-gray-100">
                     <Heart className="h-5 w-5 text-gray-500 hover:text-red-500" />
                   </button>
-                  {true && !product.isDonation && (
+                  {!product.listingType == "rent" && !product.listingType != "donate" && (
                     <div className="absolute top-2 left-2 px-2 py-1 bg-purple-500 text-white text-xs font-medium rounded-full">
                       <Clock className="h-3 w-3 inline mr-1" />
                       Available for Rent
                     </div>
                   )}
-                  {product.isDonation && (
+                  {product.listingType == "donate" && (
                     <div className="absolute top-2 left-2 px-2 py-1 bg-green-500 text-white text-xs font-medium rounded-full">
                       <Gift className="h-3 w-3 inline mr-1" />
                       Free Donation
@@ -195,14 +198,14 @@ export default function ProductListPage() {
                 <div className="p-4">
                   <h3 className="text-lg font-medium text-gray-900 truncate">{product.title}</h3>
                   <div className="flex justify-between items-center mt-1">
-                    {product.isDonation ? (
+                    {product.listingType == "donate" ? (
                       <p className="text-xl font-bold text-green-600">Free</p>
                     ) : (
                       <p className="text-xl font-bold text-gray-900">₹{product.price}</p>
                     )}
-                    {product.isRentable && !product.isDonation && (
+                    {product.listingType == "rent" && product.listingType != "donate" && (
                       <div className="flex items-center text-purple-600 text-sm font-medium">
-                        <Clock className="h-4 w-4 mr-1" />₹{product.rentalPrice || Math.round(product.price * 0.1)}/day
+                        <Clock className="h-4 w-4 mr-1" />₹{product.rentAmount || Math.round(product.price * 0.1)}/day
                       </div>
                     )}
                   </div>
@@ -217,17 +220,13 @@ export default function ProductListPage() {
                       {product.category}
                     </span>
                     <button className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                      {false ? (
+                      {product.listingType == "donate" ? (
                         <>
                           <Gift className="h-4 w-4 mr-1" />
                           Request Item
                         </>
-                      ) : product.isRentable ? (
-                        <>
-                          <ShoppingCart className="h-4 w-4 mr-1" />
-                          View Options
-                        </>
-                      ) : (
+                      ) 
+                       : (
                         <>
                           <ShoppingCart className="h-4 w-4 mr-1" />
                           Add to Cart

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Heart, Flag, Clock, Gift } from "lucide-react"
 import ShareButton from "./sharebutton"
+import BuyButton from '../buttonClick'
 
 export default function RightColumn({ listing, purchaseType = "buy" }) {
   // If the item is a donation, force the purchase type to "donate"
@@ -21,13 +22,13 @@ export default function RightColumn({ listing, purchaseType = "buy" }) {
             <Badge variant="outline" className="text-gray-600 border-gray-300">
               {listing?.condition}
             </Badge>
-            {true && !listing?.isDonation && (
+            {listing.listingType == "rent" && listing.listingType != "donate" && (
               <Badge className="bg-purple-100 text-purple-700">
                 <Clock className="h-3 w-3 mr-1" />
                 Rentable
               </Badge>
             )}
-            {listing?.isDonation && (
+            {listing.listingType === "donate" && (
               <Badge className="bg-green-100 text-green-700">
                 <Gift className="h-3 w-3 mr-1" />
                 Free
@@ -36,63 +37,26 @@ export default function RightColumn({ listing, purchaseType = "buy" }) {
           </div>
 
           {/* Price */}
-          {effectivePurchaseType === "donate" ? (
+          {listing.listingType === "donate" ? (
             <div className="text-3xl font-extrabold text-green-600">Free</div>
-          ) : effectivePurchaseType === "rent" ? (
+          ) : listing.listingType != "donate" && listing.listingType === "rent" ? (
             <div className="text-3xl font-extrabold text-purple-600">
-              ₹{listing?.rentalPrice || Math.round((listing?.price || 0) * 0.1)}/day
+              ₹{listing?.rentAmount || Math.round((listing?.price || 0) * 0.1)}/day
             </div>
           ) : (
             <div className="text-3xl font-extrabold text-indigo-600">₹{listing?.price || 0}</div>
           )}
 
-          {/* Donation Message */}
-          {listing?.isDonation && (
-            <div className="bg-green-50 p-4 rounded-md">
-              <p className="text-green-800 text-sm">
-                This item is being donated for free. The owner wants to give it to someone who needs it.
-                {listing?.donationReason && (
-                  <>
-                    <br />
-                    <br />
-                    <span className="font-medium">Reason for donation:</span>
-                    <br />
-                    {listing.donationReason}
-                  </>
-                )}
-              </p>
-            </div>
-          )}
 
           {/* Actions */}
           <div className="flex flex-col gap-3 mt-4">
-            <Button
-              size="lg"
-              className={`w-full text-white ${
-                effectivePurchaseType === "donate"
-                  ? "bg-green-600 hover:bg-green-700"
-                  : effectivePurchaseType === "rent"
-                    ? "bg-purple-600 hover:bg-purple-700"
-                    : "bg-indigo-600 hover:bg-indigo-700"
-              }`}
-            >
-              {false ? (
-                <>
-                  <Gift className="h-4 w-4 mr-2" />
-                  Request Item
-                </>
-              ) : effectivePurchaseType === "rent" ? (
-                "Rent Now"
-              ) : (
-                "Contact Seller"
-              )}
-            </Button>
-            {true && (
+          <BuyButton listing = {listing}/>
+           
               <Button size="lg" variant="outline" className="w-full text-gray-700 hover:bg-gray-100">
                 <Heart className="h-4 w-4 mr-2 text-red-500" />
                 Add to Wishlist
               </Button>
-            )}
+            
           </div>
 
           {/* Share & Report */}

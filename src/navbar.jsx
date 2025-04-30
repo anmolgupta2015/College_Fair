@@ -1,84 +1,296 @@
-import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
-import { LogIn, UserPlus, ShoppingCart, Search, Upload } from "lucide-react";
-import { auth } from './firebase/config'; 
+"use client"
+
+import { useState, useEffect } from "react"
+import { NavLink, useNavigate, useLocation } from "react-router-dom"
+import { ShoppingBag, Store, Menu, X, User, ChevronDown } from "lucide-react"
+import { auth } from "./firebase/config"
+import { signOut } from "firebase/auth"
 
 const Navbar = () => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false)
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const [currentUser, setCurrentUser] = useState(null)
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsOpen(false)
+    setIsUserMenuOpen(false)
+  }, [location])
+
+  // Listen for auth state changes
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setCurrentUser(user)
+    })
+    return () => unsubscribe()
+  }, [])
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth)
+      navigate("/login")
+      setIsUserMenuOpen(false)
+    } catch (error) {
+      console.error("Error logging out:", error)
+    }
+  }
 
   return (
-    <nav className="bg-gradient-to-r from-indigo-500 to-purple-600 shadow-lg sticky top-0 w-full z-50 py-4">
-      <div className="container mx-auto flex items-center justify-between px-6">
-        <NavLink className="text-3xl font-extrabold text-white tracking-wide" to="/">
-          CollegeFair
-        </NavLink>
+    <nav className="bg-white border-b border-gray-100 sticky top-0 w-full z-50">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <div className="flex-shrink-0">
+            <NavLink
+              className="text-xl sm:text-2xl font-bold text-gray-800 tracking-tight flex items-center"
+              to="/"
+              aria-label="CollegeFair Home"
+            >
+              <span className="text-purple-600">College</span>
+              <span className="text-gray-800">Fair</span>
+            </NavLink>
+          </div>
 
-    
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex items-center justify-between flex-1 ml-10">
+            <div className="flex space-x-1">
+              <NavLink
+                className={({ isActive }) =>
+                  `px-3 py-2 rounded text-sm font-medium transition-colors duration-200 ${
+                    isActive ? "text-purple-600" : "text-gray-600 hover:text-purple-600"
+                  }`
+                }
+                to="/"
+              >
+                Home
+              </NavLink>
+              <NavLink
+                className={({ isActive }) =>
+                  `px-3 py-2 rounded text-sm font-medium transition-colors duration-200 ${
+                    isActive ? "text-purple-600" : "text-gray-600 hover:text-purple-600"
+                  }`
+                }
+                to="/categories"
+              >
+                Categories
+              </NavLink>
+              <NavLink
+                className={({ isActive }) =>
+                  `px-3 py-2 rounded text-sm font-medium transition-colors duration-200 ${
+                    isActive ? "text-purple-600" : "text-gray-600 hover:text-purple-600"
+                  }`
+                }
+                to="/about"
+              >
+                About
+              </NavLink>
+            </div>
 
-        {/* Mobile Menu Button */}
-        <button
-          className="lg:hidden text-white focus:outline-none"
-          onClick={() => {
-            document.getElementById("mobile-menu").classList.toggle("hidden");
-          }}
-        >
-          <svg
-            className="w-7 h-7"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-          </svg>
-        </button>
+            {/* Action Buttons */}
+            <div className="flex items-center space-x-4">
+              <NavLink
+                to="/addItem"
+                className="flex items-center gap-1.5 px-4 py-1.5 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700 transition-colors duration-200"
+                aria-label="Sell an item"
+              >
+                <Store size={15} /> Sell Item
+              </NavLink>
 
-        {/* Navigation Links */}
-        <div className="hidden lg:flex space-x-8 text-white font-medium">
-          <NavLink className="hover:text-yellow-300 transition" to="/">Home</NavLink>
-          <NavLink className="hover:text-yellow-300 transition" to="/categories">Explore Categories</NavLink>
-          <NavLink className="hover:text-yellow-300 transition" to="/about">About</NavLink>
-      
-        </div>
+              {currentUser ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-gray-700 rounded hover:bg-gray-50 transition-colors duration-200"
+                    aria-expanded={isUserMenuOpen}
+                    aria-haspopup="true"
+                  >
+                    <User size={15} />
+                    <span className="text-sm font-medium">Account</span>
+                    <ChevronDown
+                      size={14}
+                      className={`transition-transform duration-200 ${isUserMenuOpen ? "rotate-180" : ""}`}
+                    />
+                  </button>
 
-        {/* Buttons */}
-        <div className="hidden lg:flex items-center space-x-4">
-          <NavLink to="/addItem" className="flex items-center gap-2 px-5 py-2 bg-blue-500 text-white rounded-full shadow-md hover:bg-blue-600 transition">
-            <Upload size={20} /> Wanna Sell?
-          </NavLink>
-        
-          {!auth && (
-  <NavLink
-    to="/register"
-    className="flex items-center gap-2 px-5 py-2 bg-green-500 text-white rounded-full shadow-md hover:bg-green-600 transition"
-  >
-    <UserPlus size={20} /> Register
-  </NavLink>
-)}
+                  {isUserMenuOpen && (
+                    <div className="absolute right-0 mt-1 w-48 bg-white rounded-md shadow-md py-1 z-50 border border-gray-100">
+                      <NavLink
+                        to="/profile"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        Your Profile
+                      </NavLink>
+                      <NavLink
+                        to="/orders"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        Your Orders
+                      </NavLink>
+                      <div className="border-t border-gray-100 my-1"></div>
+                      <button
+                        onClick={handleLogout}
+                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="flex items-center space-x-3">
+                  <NavLink
+                    to="/login"
+                    className="px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-purple-600 transition-colors duration-200"
+                    aria-label="Sign in"
+                  >
+                    Sign In
+                  </NavLink>
+                  <NavLink
+                    to="/register"
+                    className="px-3 py-1.5 text-sm font-medium text-white bg-gray-800 rounded-md hover:bg-gray-700 transition-colors duration-200"
+                    aria-label="Register"
+                  >
+                    Register
+                  </NavLink>
+                </div>
+              )}
 
+              <NavLink
+                to="/cart"
+                className="relative p-1.5 text-gray-700 rounded hover:bg-gray-50 transition-colors duration-200"
+                aria-label="Shopping cart"
+              >
+                <ShoppingBag size={18} />
+                {/* Only show the badge if there are items */}
+                <span className="absolute -top-1 -right-1 bg-purple-600 text-xs text-white font-medium rounded-full h-4 w-4 flex items-center justify-center">
+                  3
+                </span>
+              </NavLink>
+            </div>
+          </div>
 
-          <NavLink to="/cart" className="relative p-3 text-white rounded-full hover:bg-gray-200 hover:text-purple-700 transition">
-            <ShoppingCart size={24} />
-          </NavLink>
+          {/* Mobile menu button */}
+          <div className="flex items-center space-x-3 lg:hidden">
+            {currentUser && (
+              <NavLink to="/profile" className="p-1.5 text-gray-700 rounded hover:bg-gray-50" aria-label="Your profile">
+                <User size={18} />
+              </NavLink>
+            )}
+
+            <NavLink
+              to="/cart"
+              className="relative p-1.5 text-gray-700 rounded hover:bg-gray-50"
+              aria-label="Shopping cart"
+            >
+              <ShoppingBag size={18} />
+              <span className="absolute -top-1 -right-1 bg-purple-600 text-xs text-white font-medium rounded-full h-4 w-4 flex items-center justify-center">
+                3
+              </span>
+            </NavLink>
+
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-1.5 text-gray-700 rounded hover:bg-gray-50 focus:outline-none"
+              aria-expanded={isOpen}
+              aria-label="Toggle menu"
+            >
+              {isOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Mobile Menu */}
-      <div id="mobile-menu" className="hidden lg:hidden flex flex-col items-center space-y-4 py-6 bg-white shadow-lg">
-        <NavLink className="hover:text-purple-600 transition" to="/">Home</NavLink>
-        <NavLink className="hover:text-purple-600 transition" to="/product">Products</NavLink>
-        <NavLink className="hover:text-purple-600 transition" to="/about">About</NavLink>
-        <NavLink className="hover:text-purple-600 transition" to="/contact">Contact</NavLink>
-        <NavLink to="/addItem" className="flex items-center gap-2 px-5 py-2 bg-blue-500 text-white rounded-full shadow-md hover:bg-blue-600 transition">
-          <Upload size={20} /> Wanna Sell?
-        </NavLink>
-      
-        <NavLink to="/cart" className="relative p-3 text-purple-700 rounded-full hover:bg-gray-200 transition">
-          <ShoppingCart size={24} />
-        </NavLink>
-      </div>
-    </nav>
-  );
-};
+      {isOpen && (
+        <div className="lg:hidden bg-white border-t border-gray-100">
+          <div className="px-2 pt-2 pb-3 space-y-1">
+            <NavLink
+              className={({ isActive }) =>
+                `block px-3 py-2 rounded text-base font-medium ${
+                  isActive ? "text-purple-600" : "text-gray-700 hover:text-purple-600"
+                }`
+              }
+              to="/"
+            >
+              Home
+            </NavLink>
+            <NavLink
+              className={({ isActive }) =>
+                `block px-3 py-2 rounded text-base font-medium ${
+                  isActive ? "text-purple-600" : "text-gray-700 hover:text-purple-600"
+                }`
+              }
+              to="/categories"
+            >
+              Categories
+            </NavLink>
+            <NavLink
+              className={({ isActive }) =>
+                `block px-3 py-2 rounded text-base font-medium ${
+                  isActive ? "text-purple-600" : "text-gray-700 hover:text-purple-600"
+                }`
+              }
+              to="/about"
+            >
+              About
+            </NavLink>
+          </div>
 
-export default Navbar;
+          <div className="px-4 py-3 border-t border-gray-100">
+            {currentUser ? (
+              <div className="space-y-1">
+                <NavLink
+                  to="/profile"
+                  className="block px-3 py-2 rounded text-base font-medium text-gray-700 hover:text-purple-600"
+                >
+                  Your Profile
+                </NavLink>
+                <NavLink
+                  to="/orders"
+                  className="block px-3 py-2 rounded text-base font-medium text-gray-700 hover:text-purple-600"
+                >
+                  Your Orders
+                </NavLink>
+                <div className="border-t border-gray-100 my-1"></div>
+                <button
+                  onClick={handleLogout}
+                  className="block w-full text-left px-3 py-2 rounded text-base font-medium text-red-600 hover:bg-red-50"
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col space-y-2">
+                <NavLink
+                  to="/login"
+                  className="block px-3 py-2 rounded text-base font-medium text-gray-700 hover:text-purple-600"
+                >
+                  Sign In
+                </NavLink>
+                <NavLink
+                  to="/register"
+                  className="block px-3 py-2 rounded text-base font-medium text-white bg-gray-800 hover:bg-gray-700"
+                >
+                  Register
+                </NavLink>
+              </div>
+            )}
+
+            <NavLink
+              to="/addItem"
+              className="mt-3 block w-full px-3 py-2 rounded text-center text-base font-medium bg-purple-600 text-white hover:bg-purple-700"
+            >
+              <Store size={15} className="inline-block mr-2" /> Sell Your Items
+            </NavLink>
+          </div>
+        </div>
+      )}
+    </nav>
+  )
+}
+
+export default Navbar

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rental Inquiry - College Fair</title>
+  <style>
+    /* Base styles */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f9ff;
+      margin: 0;
+      padding: 20px;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+    
+    /* Container */
+    .container {
+      background-color: #ffffff;
+      max-width: 600px;
+      margin: auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+    
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+      color: #ffffff;
+      padding: 30px 20px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+    }
+    
+    .header-icon {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+    
+    /* Content */
+    .content {
+      padding: 30px;
+    }
+    
+    /* Sections */
+    .section {
+      margin-bottom: 25px;
+      background-color: #f8fafc;
+      border-radius: 8px;
+      padding: 20px;
+      border-left: 4px solid #0ea5e9;
+    }
+    
+    .section-title {
+      font-size: 16px;
+      color: #0284c7;
+      margin: 0 0 15px 0;
+      display: flex;
+      align-items: center;
+      font-weight: 600;
+    }
+    
+    .section-title span {
+      margin-right: 8px;
+    }
+    
+    .info {
+      font-size: 15px;
+      line-height: 1.6;
+      margin: 0;
+    }
+    
+    .info p {
+      margin: 8px 0;
+    }
+    
+    /* Rental details highlight */
+    .rental-period {
+      background-color: #e0f2fe;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 15px;
+      border: 1px dashed #0ea5e9;
+    }
+    
+    .rental-period-title {
+      color: #0284c7;
+      font-weight: 600;
+      margin: 0 0 10px 0;
+      display: flex;
+      align-items: center;
+    }
+    
+    .rental-period-title span {
+      margin-right: 8px;
+    }
+    
+    .date-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    
+    .date-label {
+      color: #64748b;
+      font-size: 13px;
+    }
+    
+    .date-value {
+      font-weight: 600;
+      color: #0f172a;
+    }
+    
+    .total-cost {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #bae6fd;
+      font-weight: 700;
+      color: #0284c7;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    /* CTA Button */
+    .cta-container {
+      text-align: center;
+      margin: 30px 0;
+    }
+    
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+      color: #ffffff;
+      padding: 14px 30px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(14, 165, 233, 0.2);
+    }
+    
+    .cta-button:hover {
+      background: linear-gradient(135deg, #0284c7 0%, #075985 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(14, 165, 233, 0.3);
+    }
+    
+    /* Footer */
+    .footer {
+      text-align: center;
+      font-size: 13px;
+      color: #64748b;
+      padding: 20px;
+      background-color: #f1f5f9;
+      border-top: 1px solid #e2e8f0;
+    }
+    
+    .divider {
+      height: 1px;
+      background-color: #e2e8f0;
+      margin: 25px 0;
+    }
+    
+    /* Responsive adjustments */
+    @media only screen and (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+      
+      .content {
+        padding: 20px;
+      }
+      
+      .section {
+        padding: 15px;
+      }
+      
+      .date-row {
+        flex-direction: column;
+        margin-bottom: 15px;
+      }
+      
+      .date-value {
+        margin-top: 3px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>New Rental Inquiry!</h1>
+  </div>
+
+  <div class="content">
+    <p>Hi there,</p>
+    <p><strong>{{ user_name }}</strong> is interested in renting your item on <strong>College Fair</strong>!</p>
+
+    <div class="section">
+      <h3 class="section-title"><span>👤</span> Renter Details</h3>
+      <div class="info">
+        <p><strong>Name:</strong> {{ user_name }}</p>
+        <p><strong>Email:</strong> {{ user_email }}</p>
+        <p><strong>Phone:</strong> {{ user_phone }}</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3 class="section-title"><span>📦</span> Item Details</h3>
+      <div class="info">
+        <p><strong>Item:</strong> {{ product_name }}</p>
+        <p><strong>Daily Rate:</strong> ₹{{  payloadRent.price }}/day</p>
+        <p><strong>View Item:</strong> <a href="{{ product_link }}" style="color: #0ea5e9;">Click here</a></p>
+      </div>
+      
+      <div class="rental-period">
+        <h4 class="rental-period-title"><span>🗓️</span> Rental Period</h4>
+        
+        <div class="date-col">
+          <div>
+            <div class="date-label">START DATE</div>
+            <div class="date-value">{{ payloadRent.startDate }}</div>
+          </div>
+
+          <div>
+
+            <div class="date-label">END DATE</div>
+            <div class="date-value">{{ payloadRent.endDate }}</div>
+          </div>
+        </div>
+        
+        <div class="date-row">
+          <div>
+            <div class="date-label">DURATION</div>
+            <div class="date-value">{{ payloadRent.rentDays }} day(s)</div>
+          </div>
+        </div>
+        
+        <div class="total-cost">
+          <span>TOTAL RENTAL AMOUNT:</span>
+          <span>₹{{  payloadRent.price* payloadRent.rentDays }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    
+    <p>The renter is waiting for your response. Please review their request and get in touch with them to confirm availability and arrange the rental.</p>
+
+    <div class="cta-container">
+      <a href="mailto:{{ user_email }}" class="cta-button">Contact Renter</a>
+    </div>
+
+    <p style="color: #64748b; font-size: 14px;">
+      <strong>Note:</strong> Remember to confirm the rental dates and discuss any security deposit or damage policy with the renter.
+    </p>
+  </div>
+
+  <div class="footer">
+    <p>📢 This is an automated notification from College Fair. Please do not reply directly to this email.</p>
+    <p>© 2024 College Fair. All rights reserved.</p>
+  </div>
+</div>
+
+</body>
+</html>

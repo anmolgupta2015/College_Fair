@@ -84,13 +84,13 @@ export default function ListingPage() {
 
           {/* Item Status Badge */}
           <div className="mb-4">
-            {true && (
+            {listing.listingType == "donate" && (
               <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 mr-2">
                 <Gift className="h-4 w-4 mr-1" />
                 Free Donation
               </span>
             )}
-            {true && false && (
+            {listing.listingType == "rent" && listing.lisitngType!="donate" && (
               <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
                 <Clock className="h-4 w-4 mr-1" />
                 Available for Rent
@@ -132,32 +132,23 @@ export default function ListingPage() {
               </div>
 
               {/* Purchase Type Selector (only for rentable items that are not donations) */}
-              {true && !listing.isDonation && (
+              {listing.listingType === "rent" && listing.lisitngType !== "donate" && (
                 <div className="bg-white p-4 rounded-lg shadow">
                   <div className="flex space-x-4 mb-4">
-                    <button
+
+                    {listing.lisitngType === "rent" &&(<button
                       className={`flex-1 py-2 px-4 rounded-md font-medium ${
-                        purchaseType === "buy"
-                          ? "bg-indigo-600 text-white"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                      }`}
-                      onClick={() => setPurchaseType("buy")}
-                    >
-                      Buy
-                    </button>
-                    <button
-                      className={`flex-1 py-2 px-4 rounded-md font-medium ${
-                        purchaseType === "rent"
+                        listing.lisitngType === "rent"
                           ? "bg-purple-600 text-white"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                       }`}
                       onClick={() => setPurchaseType("rent")}
                     >
                       Rent
-                    </button>
+                    </button>)}
                   </div>
 
-                  {purchaseType === "rent" && <RentalOptions listing={listing} />}
+                  {listing.listingType === "rent" && <RentalOptions listing={listing} />}
                 </div>
               )}
 

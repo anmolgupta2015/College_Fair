@@ -16,6 +16,14 @@ const SignupPage = () => {
     async function handleSignup(e) {
         e.preventDefault();
         setError("");
+          let Email = userCredentials.email;
+           Email  =  Email.slice(-10);
+          // console.log(Email);
+           if(Email != "pec.edu.in"){
+            setError("Please Register with college e-mail id only");
+            return;
+           }
+          
 
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, userCredentials.email, userCredentials.password);

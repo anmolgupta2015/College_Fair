@@ -12,6 +12,7 @@ import ProductDetails from './ProductDetails/ProductDetails';
 import Categories from './home/categories';
 import RentalOption from './rentaloption';
 import ButtonClick from '../src/buttonClick'
+import AboutUs from "./about"
 
 
 
@@ -45,8 +46,9 @@ const App = () => {
         <Route path="/itemlist/product/:productId" element={<ProductDetails />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/profile/:RouteuserId" element={<ProfilePage MyProfile = "false" />} />
+        <Route path="/about" element={<AboutUs />} />
         {/* Protected Routes */}
-        <Route path="/" element={<ProtectedRoute element={<MainPage />} />} />
+        <Route path="/" element={<ItemList />} />
          <Route path="/itemlist" element={<ItemList />}  />
          <Route path="/itemlist/:categoryRoute"  element={<ItemList />}/>
         <Route path="/profile" element={<ProtectedRoute element={<ProfilePage MyProfile = "true" />} />} />
