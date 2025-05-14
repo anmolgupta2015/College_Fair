@@ -14,7 +14,7 @@ import RentalOption from './rentaloption';
 import ButtonClick from '../src/buttonClick'
 import AboutUs from "./about"
 import PreviousPaper from "./PreviousPaper/previousPaperUpload"
-import PreviousPaperComponent from './PreviousPaper/previousPaper'
+import PreviousPaperComponent from './PreviousPaper/PreviousPaper'
 import Paper from './PreviousPaper/paper'
 
 
