@@ -13,7 +13,9 @@ import Categories from './home/categories';
 import RentalOption from './rentaloption';
 import ButtonClick from '../src/buttonClick'
 import AboutUs from "./about"
-
+import PreviousPaper from "./PreviousPaper/previousPaperUpload"
+import PreviousPaperComponent from './PreviousPaper/previousPaper'
+import Paper from './PreviousPaper/paper'
 
 
 
@@ -54,6 +56,9 @@ const App = () => {
         <Route path="/profile" element={<ProtectedRoute element={<ProfilePage MyProfile = "true" />} />} />
         <Route path="/rental" element={<RentalOption />} />
         <Route path="/button" element={<ButtonClick />}  />
+        <Route path="/paper" element={<PreviousPaper />}  />
+        <Route path="/papercomp" element={<PreviousPaperComponent />}  />
+        <Route path="/papercomp/:paperId"  element={<Paper />}/>
         {/* Redirect unknown paths */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
