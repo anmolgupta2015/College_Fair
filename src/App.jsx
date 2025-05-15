@@ -16,8 +16,7 @@ import AboutUs from "./about"
 import PreviousPaper from "./PreviousPaper/previousPaperUpload"
 import PreviousPaperComponent from './PreviousPaper/PreviousPaper'
 import Paper from './PreviousPaper/paper'
-
-
+import QuestionPaperFeature from './questionPaperFeature';
 
 const ProtectedRoute = ({ element }) => {
     const [user, setUser] = useState(null);
@@ -56,9 +55,10 @@ const App = () => {
         <Route path="/profile" element={<ProtectedRoute element={<ProfilePage MyProfile = "true" />} />} />
         <Route path="/rental" element={<RentalOption />} />
         <Route path="/button" element={<ButtonClick />}  />
-        <Route path="/paper" element={<PreviousPaper />}  />
-        <Route path="/papercomp" element={<PreviousPaperComponent />}  />
-        <Route path="/papercomp/:paperId"  element={<Paper />}/>
+        <Route path="/question_paper/question_paper_upload" element={<PreviousPaper />}  />
+        <Route path="/question_paper" element={<QuestionPaperFeature />}  />
+        <Route path="/question_paper/question_paper_browse" element={<PreviousPaperComponent />}  />
+        <Route path="/question_paper/question_paper_browse/:paperId"  element={<Paper />}/>
         {/* Redirect unknown paths */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

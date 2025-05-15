@@ -24,7 +24,7 @@ export default function QuestionPaperDisplay() {
   const navigate = useNavigate(); // For React Router DOM
 
   const handleViewFullScreen = (paper) => {
-    navigate(`/papercomp/${paper.id}`); // For React Router DOM
+    navigate(`/question_paper/question_paper_browse/${paper.id}`); // For React Router DOM
   };
 
 

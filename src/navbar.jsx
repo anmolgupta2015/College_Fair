@@ -82,6 +82,17 @@ const Navbar = () => {
                     isActive ? "text-purple-600" : "text-gray-600 hover:text-purple-600"
                   }`
                 }
+                to="/question_paper"
+              >
+                Previous Year Papers
+              </NavLink>
+
+              <NavLink
+                className={({ isActive }) =>
+                  `px-3 py-2 rounded text-sm font-medium transition-colors duration-200 ${
+                    isActive ? "text-purple-600" : "text-gray-600 hover:text-purple-600"
+                  }`
+                }
                 to="/about"
               >
                 About
@@ -159,17 +170,7 @@ const Navbar = () => {
                 </div>
               )}
 
-              <NavLink
-                to="/cart"
-                className="relative p-1.5 text-gray-700 rounded hover:bg-gray-50 transition-colors duration-200"
-                aria-label="Shopping cart"
-              >
-                <ShoppingBag size={18} />
-                {/* Only show the badge if there are items */}
-                <span className="absolute -top-1 -right-1 bg-purple-600 text-xs text-white font-medium rounded-full h-4 w-4 flex items-center justify-center">
-                  3
-                </span>
-              </NavLink>
+              
             </div>
           </div>
 
@@ -181,16 +182,7 @@ const Navbar = () => {
               </NavLink>
             )}
 
-            <NavLink
-              to="/cart"
-              className="relative p-1.5 text-gray-700 rounded hover:bg-gray-50"
-              aria-label="Shopping cart"
-            >
-              <ShoppingBag size={18} />
-              <span className="absolute -top-1 -right-1 bg-purple-600 text-xs text-white font-medium rounded-full h-4 w-4 flex items-center justify-center">
-                3
-              </span>
-            </NavLink>
+           
 
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -228,6 +220,16 @@ const Navbar = () => {
             >
               Categories
             </NavLink>
+            <NavLink
+              className={({ isActive }) =>
+                `block px-3 py-2 rounded text-base font-medium ${
+                  isActive ? "text-purple-600" : "text-gray-700 hover:text-purple-600"
+                }`
+              }
+              to="/question_paper"
+            >
+              Previous Year Papers
+            </NavLink>            
             <NavLink
               className={({ isActive }) =>
                 `block px-3 py-2 rounded text-base font-medium ${

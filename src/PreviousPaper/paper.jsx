@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 import { doc, getDoc } from "firebase/firestore"
 import { db } from "../firebase/config"
+import ShareButton from "../ProductDetails/sharebutton"
 
 import { FileText, Download, BookOpen, ChevronLeft, ChevronRight, Bookmark, Share2, Eye, Calendar, GraduationCap, BookMarked, Code } from 'lucide-react'
 
@@ -62,8 +63,43 @@ function PaperDetails() {
   const paperData = paper || samplePaper
 
   // Filter out null images
-  const validImages = paperData.images ? paperData.images.filter(img => img !== null) : []
+  const validImages = paperData.images ? paperData.images.filter(img => img !== null) : [];
+    const payload = {
+    Images : validImages,
+    Subject : paperData.Subject,
+  }
+  console.log(payload);
+   
+     async function handleDownload(){
+  
 
+    try {
+      const response = await fetch("http://127.0.0.1:5000/download_pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}`);
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${paperData.Subject} QuestionPaper.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+
+  } catch (error) {
+    alert("Error downloading PDF!");
+    console.error(error);
+  }
+  };
   const nextImage = () => {
     if (currentImageIndex < validImages.length - 1) {
       setCurrentImageIndex(currentImageIndex + 1)
@@ -211,16 +247,10 @@ function PaperDetails() {
               {/* Action buttons */}
               <div className="p-4 flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <button className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-purple-600 transition-colors">
-                    <Bookmark className="h-4 w-4" />
-                    <span>Save</span>
-                  </button>
-                  <button className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-purple-600 transition-colors">
-                    <Share2 className="h-4 w-4" />
-                    <span>Share</span>
-                  </button>
+                
+                 <ShareButton/>
                 </div>
-                <button className="px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg shadow-sm transition-colors flex items-center gap-2">
+                <button onClick = {handleDownload} className="px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg shadow-sm transition-colors flex items-center gap-2">
                   <Download className="h-4 w-4" />
                   <span>Download PDF</span>
                 </button>
@@ -309,4 +339,4 @@ function PaperDetails() {
   )
 }
 
-export default PaperDetails
+export default PaperDetails;
