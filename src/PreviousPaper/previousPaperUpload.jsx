@@ -117,6 +117,14 @@ export default function UploadForm() {
       <option value="Electrical Engineering">Electrical Engineering</option>
       <option value="Mechanical Engineering">Mechanical Engineering</option>
       <option value="Civil Engineering">Civil Engineering</option>
+      <option value="Material Science and Engineering">Material Science and Engineering</option>
+      <option value="Aerospace Engineering">Aerospace Engineering</option>
+      <option value="Electronics and Communication Engieering">Electronics and Communication Engieering</option>
+      <option value="Aritificial Intelligence">Artificial Intelligence</option>
+      <option value="Data Science">Data Science</option>
+      <option value="Production and Industrial Engineering">Production and Industrial Engineering</option>
+      <option value="B. Design">B. Design</option>
+      <option value="Mathematics and Computation">Mathematics and Computation</option>
       {/* Add more branch options as needed */}
     </select>
   </div>
