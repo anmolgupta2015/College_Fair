@@ -75,7 +75,7 @@ function PaperDetails() {
   
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/download_pdf", {
+      const response = await fetch("https://college-fair.onrender.com/download_pdf", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
