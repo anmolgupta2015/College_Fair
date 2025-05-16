@@ -6,6 +6,7 @@ import { db } from "../src/firebase/config"
 import { Search, Sliders, Heart, ShoppingCart, Clock, Gift } from "lucide-react"
 import Navbar from "./navbar"
 import { useParams, useNavigate } from "react-router-dom"
+import { Eye } from "lucide-react";
 
 export default function ProductListPage() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -163,7 +164,7 @@ export default function ProductListPage() {
 
         {/* Product Grid */}
         {filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 cursor-pointer" >
             {filteredProducts.map((product) => (
               <div
                 key={product.id}
@@ -179,9 +180,7 @@ export default function ProductListPage() {
                     alt={product.title}
                     className="w-full h-48 object-cover"
                   />
-                  <button className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow hover:bg-gray-100">
-                    <Heart className="h-5 w-5 text-gray-500 hover:text-red-500" />
-                  </button>
+                  
                   {!product.listingType == "rent" && !product.listingType != "donate" && (
                     <div className="absolute top-2 left-2 px-2 py-1 bg-purple-500 text-white text-xs font-medium rounded-full">
                       <Clock className="h-3 w-3 inline mr-1" />
@@ -220,18 +219,8 @@ export default function ProductListPage() {
                       {product.category}
                     </span>
                     <button className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                      {product.listingType == "donate" ? (
-                        <>
-                          <Gift className="h-4 w-4 mr-1" />
-                          Request Item
-                        </>
-                      ) 
-                       : (
-                        <>
-                          <ShoppingCart className="h-4 w-4 mr-1" />
-                          Add to Cart
-                        </>
-                      )}
+                     <Eye className="w-4 h-4 mr-1 " />
+                     View Item
                     </button>
                   </div>
                 </div>

@@ -134,13 +134,7 @@ const Navbar = () => {
                       >
                         Your Profile
                       </NavLink>
-                      <NavLink
-                        to="/orders"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                        onClick={() => setIsUserMenuOpen(false)}
-                      >
-                        Your Orders
-                      </NavLink>
+                     
                       <div className="border-t border-gray-100 my-1"></div>
                       <button
                         onClick={handleLogout}
@@ -251,12 +245,7 @@ const Navbar = () => {
                 >
                   Your Profile
                 </NavLink>
-                <NavLink
-                  to="/orders"
-                  className="block px-3 py-2 rounded text-base font-medium text-gray-700 hover:text-purple-600"
-                >
-                  Your Orders
-                </NavLink>
+               
                 <div className="border-t border-gray-100 my-1"></div>
                 <button
                   onClick={handleLogout}

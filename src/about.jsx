@@ -60,7 +60,7 @@ export default function AboutUs() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-                Redefining College Life through <span className="text-purple-600">CampusFair</span>
+                Redefining College Life through <span className="text-purple-600">CollegeFair</span>
               </h1>
               <p className="text-lg sm:text-xl text-gray-700 mb-10 leading-relaxed max-w-3xl mx-auto">
                 Connecting students through a safe, intuitive marketplace designed exclusively for university communities.

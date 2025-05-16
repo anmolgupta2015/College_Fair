@@ -52,10 +52,7 @@ export default function RightColumn({ listing, purchaseType = "buy" }) {
           <div className="flex flex-col gap-3 mt-4">
           <BuyButton listing = {listing}/>
            
-              <Button size="lg" variant="outline" className="w-full text-gray-700 hover:bg-gray-100">
-                <Heart className="h-4 w-4 mr-2 text-red-500" />
-                Add to Wishlist
-              </Button>
+              
             
           </div>
 

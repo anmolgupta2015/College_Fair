@@ -4,6 +4,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";  
 import { Timestamp,doc, setDoc } from "firebase/firestore"; // Use setDoc for correct UID
 
+
 const SignupPage = () => {
     const [userCredentials, setUserCredentials] = useState({});
     const [error, setError] = useState("");
@@ -19,7 +20,7 @@ const SignupPage = () => {
           let Email = userCredentials.email;
            Email  =  Email.slice(-10);
           // console.log(Email);
-           if(Email != "pec.edu.in"){
+          if(Email != "pec.edu.in"){
             setError("Please Register with college e-mail id only");
             return;
            }

@@ -128,7 +128,7 @@ const BuyButton = ({listing,payloadRent}) => {
   ) : listing.listingType === "rent" ? (
     "Rent Now"
   ) : (
-    "Contact Seller"
+    "Click to Show Interest"
   )}
 </Button>)
 };
