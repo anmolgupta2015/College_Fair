@@ -15,7 +15,7 @@ import shutil
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app, origins=["https://college-fair-rust.vercel.app/"])
+CORS(app, origins=["https://college-fair-rust.vercel.app"])
 
 # Flask-Mail Configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
