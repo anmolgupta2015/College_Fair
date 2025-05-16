@@ -15,7 +15,7 @@ import shutil
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:5173"])
+CORS(app, origins=["https://college-fair-rust.vercel.app/"])
 
 # Flask-Mail Configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -151,52 +151,54 @@ def create_pdf_from_image(): # Changed function name to create_pdf_from_image
 
 @app.route('/send-order-email', methods=['POST'])
 def send_order_email():
-    data = request.get_json()
-
-    user_email = data.get('user_email')
-    product_owner_email = data.get('product_owner_email')
-    product_name = data.get('product_name', 'Unknown Product')
-    price = data.get('product_price', 'N/A')
-    user_name = data.get('user_Name')
-    user_phone = data.get('user_phoneNo')
-    product_link = data.get('product_link')
-    payloadRent = data.get('payloadRent')
-    isSell = data.get('isSell')
-   
-
-    # Select appropriate template
-    if isSell:
-        html_content = render_template(
-            'mailBuy.html',
-            user_email=user_email,
-            product_name=product_name,
-            price=price,
-            user_phone=user_phone,
-            user_name=user_name,
-            product_link=product_link
-        )
-    else:
-        html_content = render_template(
-            'rent.html',
-            user_email=user_email,
-            product_name=product_name,
-            price=price,
-            user_phone=user_phone,
-            user_name=user_name,
-            product_link=product_link,
-            payloadRent=payloadRent
-        )
-
-    msg = Message(subject="🛒 New Order Received",
-                  recipients=[product_owner_email],
-                  html=html_content)
-
     try:
+        data = request.get_json()
+        print("Received data:", data)
+
+        user_email = data.get('user_email')
+        product_owner_email = data.get('product_owner_email')
+        product_name = data.get('product_name', 'Unknown Product')
+        price = data.get('product_price', 'N/A')
+        user_name = data.get('user_Name')
+        user_phone = data.get('user_phoneNo')
+        product_link = data.get('product_link')
+        payloadRent = data.get('payloadRent')
+        isSell = data.get('isSell')
+
+        if isSell:
+            html_content = render_template(
+                'mailBuy.html',
+                user_email=user_email,
+                product_name=product_name,
+                price=price,
+                user_phone=user_phone,
+                user_name=user_name,
+                product_link=product_link
+            )
+        else:
+            html_content = render_template(
+                'rent.html',
+                user_email=user_email,
+                product_name=product_name,
+                price=price,
+                user_phone=user_phone,
+                user_name=user_name,
+                product_link=product_link,
+                payloadRent=payloadRent
+            )
+
+        msg = Message(
+            subject="🛒 New Order Received",
+            recipients=[product_owner_email],
+            html=html_content
+        )
+      
         mail.send(msg)
         return jsonify({"message": "Email sent successfully"}), 200
+
     except Exception as e:
-        print(f"Error: {e}")
-        return jsonify({"message": "Failed to send email"}), 500
+        print(f"Error occurred: {e}")
+        return jsonify({"message": "Failed to send email", "error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
