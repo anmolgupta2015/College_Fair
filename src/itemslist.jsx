@@ -199,7 +199,7 @@ export default function ProductListPage() {
                   <div className="flex justify-between items-center mt-1">
                     {product.listingType == "donate" ? (
                       <p className="text-xl font-bold text-green-600">Free</p>
-                    ) : (
+                    ) : (product.listingType == "sell")&&(
                       <p className="text-xl font-bold text-gray-900">₹{product.price}</p>
                     )}
                     {product.listingType == "rent" && product.listingType != "donate" && (
@@ -218,10 +218,7 @@ export default function ProductListPage() {
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                       {product.category}
                     </span>
-                    <button className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                     <Eye className="w-4 h-4 mr-1 " />
-                     View Item
-                    </button>
+                  
                   </div>
                 </div>
               </div>
