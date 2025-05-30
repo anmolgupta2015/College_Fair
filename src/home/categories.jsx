@@ -111,19 +111,7 @@ export default function Categories() {
             Discover What You Need
           </h2>
 
-          <div className="flex flex-wrap justify-center gap-3 mt-8">
-            <div className="flex items-center gap-2 bg-slate-800/70 px-4 py-2 rounded-full text-sm backdrop-blur-sm border border-slate-700/50 shadow-lg">
-              <span className="flex h-2.5 w-2.5 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-              </span>
-              <span className="text-slate-200 font-medium">1,240+ active users</span>
-            </div>
-            <div className="flex items-center gap-2 bg-slate-800/70 px-4 py-2 rounded-full text-sm backdrop-blur-sm border border-slate-700/50 shadow-lg">
-              <span className="text-yellow-400">★★★★★</span>
-              <span className="text-slate-200 font-medium">4.9/5 satisfaction</span>
-            </div>
-          </div>
+          
         </div>
 
         <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6 md:gap-8">
@@ -146,13 +134,13 @@ export default function Categories() {
 
                 {/* Category badges */}
                 <div className="absolute top-3 right-3 flex gap-1.5">
-                  {category.trending && (
+                  {false && (
                     <div className="flex items-center gap-1 bg-amber-500 text-amber-950 text-xs font-bold px-2.5 py-1 rounded-full shadow-lg transform group-hover:scale-105 transition-transform">
                       <TrendingUp className="w-3 h-3" />
                       <span>Hot</span>
                     </div>
                   )}
-                  {category.limited && (
+                  {false && (
                     <div className="flex items-center gap-1 bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-lg transform group-hover:scale-105 transition-transform">
                       <Clock className="w-3 h-3" />
                       <span>Limited</span>
@@ -172,10 +160,6 @@ export default function Categories() {
                   {category.name}
                 </h3>
 
-                {/* Item count with animation */}
-                <p className="text-slate-400 text-sm md:text-base mb-5">
-                  <span className="font-medium text-slate-300">{category.count}</span> items available
-                </p>
 
                 {/* CTA button that appears more prominently on hover */}
                 <div
