@@ -18,6 +18,9 @@ import Paper from './PreviousPaper/paper'
 import QuestionPaperFeature from './questionPaperFeature';
 import { Toaster } from "@/components/ui/sonner";
 import RemoveItem from './removeItem'
+import ReactGA from 'react-ga4';
+ReactGA.initialize("G-3KHJY2RDS3");  // Replace with your ID
+ReactGA.send("pageview");
 const ProtectedRoute = ({ element }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
