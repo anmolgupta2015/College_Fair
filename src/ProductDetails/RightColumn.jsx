@@ -49,9 +49,11 @@ export default function RightColumn({ listing, purchaseType = "buy" }) {
 
 
           {/* Actions */}
-          <div className="flex flex-col gap-3 mt-4">
-          <BuyButton listing = {listing}/>
-           
+        <div className="flex flex-col gap-3 mt-4">
+  {listing.listingType !== 'rent' && (
+    <BuyButton listing={listing} />
+  )}
+
               
             
           </div>

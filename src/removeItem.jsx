@@ -171,7 +171,7 @@ const ItemList = () => {
               <p className="text-muted-foreground text-center max-w-sm">
                 You haven't listed any items yet. Start by adding your first item to get started.
               </p>
-              <Button className="mt-4">Add Your First Item</Button>
+              <Button className="mt-4" onClick={()=>navigate('/additem')}>Add Your First Item</Button>
             </CardContent>
           </Card>
         ) : (

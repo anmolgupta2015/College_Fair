@@ -5,12 +5,14 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 import {useState,useEffect} from 'react';
 import { Gift } from 'lucide-react';
-
+import { useNavigate } from 'react-router-dom';
 
 const auth = getAuth();
 const db = getFirestore();
+
 const BuyButton = ({listing,payloadRent}) => {
   //const [user, setUser] = useState(null);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   console.log(payloadRent);
   const [userId, setUserId] = useState(null);
@@ -23,7 +25,7 @@ const BuyButton = ({listing,payloadRent}) => {
     user_phoneNo: (buyerData !==  null)?buyerData.phone:"",
     user_Name: (buyerData !==  null)?buyerData.fullName:"",
     user_Id: (userId!=null)?userId:"",
-    product_owner_email: "anmolgupta.bt22cse@pec.edu.in",  
+    product_owner_email: sellerData?.email,  
     product_name: listing.title,
     product_price : listing.price,
     product_link: window.location.href,// Replace dynamically
@@ -92,7 +94,20 @@ const BuyButton = ({listing,payloadRent}) => {
 // console.log(listing.userId);
 //console.log(user);
   const handleBuy = async () => {
-  
+      
+    if(auth.currentUser == null){
+      alert('Kindly Login before Proceeding')
+      navigate('/login');
+      return;
+    }
+
+    if(listing.listingType == "rent"){
+    
+      if(payloadRent.rentDays == "" || payloadRent.startDate == ""){
+        alert("Please Complete the rental form");
+        rent
+      }
+    }
 
     try {
       setLoading(true);
@@ -103,7 +118,7 @@ const BuyButton = ({listing,payloadRent}) => {
       });
 
       const data = await response.json();
-      alert(data.message);
+     alert("Thank you for your interest! Your details have been shared with the seller. They may reach out to you via email or phone soon.")
     } catch (error) {
       alert("Error sending email");
       console.error(error);

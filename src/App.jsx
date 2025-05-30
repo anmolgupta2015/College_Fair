@@ -45,7 +45,7 @@ const App = () => {
 
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/addItem" element={<ProtectedRoute element={<AddItem />} />}/>
+        <Route path="/addItem"element={<ProtectedRoute element={<AddItem/>} />}/>
         <Route path="/itemlist/product/:productId" element={<ProductDetails />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/profile/:RouteuserId" element={<ProfilePage MyProfile = "false" />} />
