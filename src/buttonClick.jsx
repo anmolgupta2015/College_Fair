@@ -11,6 +11,7 @@ const auth = getAuth();
 const db = getFirestore();
 const BuyButton = ({listing,payloadRent}) => {
   //const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
   console.log(payloadRent);
   const [userId, setUserId] = useState(null);
   const [buyerData, setBuyerData] = useState(null);
@@ -94,6 +95,7 @@ const BuyButton = ({listing,payloadRent}) => {
   
 
     try {
+      setLoading(true);
       const response = await fetch("https://college-fair.onrender.com/send-order-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -105,6 +107,8 @@ const BuyButton = ({listing,payloadRent}) => {
     } catch (error) {
       alert("Error sending email");
       console.error(error);
+    } finally{
+      setLoading(false);
     }
   };
 
@@ -112,6 +116,7 @@ const BuyButton = ({listing,payloadRent}) => {
   <Button
   size="lg"
   onClick={handleBuy}
+  disabled={loading}
   className={`w-full text-white ${
     true
       ? "bg-green-600 hover:bg-green-700"

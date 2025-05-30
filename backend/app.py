@@ -135,19 +135,6 @@ def create_pdf_from_image(): # Changed function name to create_pdf_from_image
             return jsonify({'error': 'Failed to generate PDF'}), 500
     except Exception as e:
         return jsonify({'error': f'An error occurred: {e}'}), 500
-    # finally: # Removed the finally block
-    #     if pdf_path:
-    #         try:
-    #             os.remove(pdf_path)
-    #         except Exception as e:
-    #             print(f"Error deleting temporary file: {e}")
-
-  ## user_name = data.get('name')
-   ## user_email = data.get('email')
-   ## subject = data.get('subject')
-   ## body = data.get('body')
-  ## """ html_content = render_template('query.html',"""
-  ## """ msg = message(subject:"New qeury recived"),recipients = ["anmolgupta1502@gmail.com"],html = html_content)"""
 
 @app.route('/send-order-email', methods=['POST'])
 def send_order_email():

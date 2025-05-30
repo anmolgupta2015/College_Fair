@@ -10,12 +10,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Upload, ImageIcon, X, Plus, Calendar, Gift, Tag, AlertCircle } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { toast } from "sonner";
 
 export default function ListingPage() {
   const [listingType, setListingType] = useState("sell")
   const [images, setImages] = useState([null, null, null, null, null])
   const [customDetails, setCustomDetails] = useState([{ key: "", value: "" }])
-
+  const [loading, setLoading] = useState(false);
   // Base form data for all listing types
   const [formData, setFormData] = useState({
     title: "",
@@ -121,7 +122,7 @@ export default function ListingPage() {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault()
-
+    setLoading(true);
     // Convert customDetails array into a map
     const detailsMap = customDetails.reduce((acc, detail) => {
       if (detail.key && detail.value) {
@@ -142,10 +143,19 @@ export default function ListingPage() {
         createdAt: serverTimestamp(),
         userId: auth.currentUser.uid,
       })
-      alert("Your listing has been created successfully!")
+      toast({
+      title: "Listing Created ✅",
+      description: "Your listing has been created successfully!",
+      });
     } catch (error) {
       console.error("Error adding document: ", error)
-      alert("Failed to create listing.")
+      toast({
+    variant: "destructive",
+    title: "Error ❌",
+    description: "Failed to create listing. Please try again.",
+  });
+    } finally{
+      setLoading(false);
     }
   }
 
@@ -631,6 +641,7 @@ export default function ListingPage() {
                       <Button
                         type="submit"
                         size="lg"
+                        disabled = {loading}
                         className="bg-primary hover:bg-primary/90 text-white font-medium text-base py-6 transition-all"
                       >
                         <Upload className="h-4 w-4 mr-2" />
@@ -653,7 +664,7 @@ export default function ListingPage() {
                 </Card>
                 <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border p-4 flex justify-between items-center shadow-lg md:hidden z-10">
                   <div className="text-sm font-medium">Creating {listingType} listing</div>
-                  <Button type="submit" size="sm" className="bg-primary text-white">
+                  <Button type="submit" size="sm" className="bg-primary text-white" disabled={loading}>
                     <Upload className="h-3 w-3 mr-1" />
                     Submit
                   </Button>

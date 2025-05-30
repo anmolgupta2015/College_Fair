@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 const LoginPage = () => {
   const [userCredentials, setUserCredentials] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
+  const [loading,setLoading] = useState(false);
   const navigate = useNavigate();
 
   function handleChange(e) {
@@ -15,9 +16,12 @@ const LoginPage = () => {
   function handleLogin(e) {
     e.preventDefault();
     setError("");
+    setLoading(true);
     signInWithEmailAndPassword(auth, userCredentials.email, userCredentials.password)
       .then((userCredential) => {
-        navigate("/profile");
+        setLoading(false);
+        navigate("/");
+        
       })
       .catch((error) => {
         let errorMessage = "An unexpected error occurred. Please try again.";
@@ -30,8 +34,10 @@ const LoginPage = () => {
         } else if (error.code === "auth/too-many-requests") {
           errorMessage = "Too many login attempts. Please try again later.";
         }
+        setLoading(false);
         setError(errorMessage);
-      });
+      }
+    );
   }
 
   function handleResetPassword() {
@@ -74,6 +80,7 @@ const LoginPage = () => {
           </div>
           <button
             type="submit"
+            disabled = {loading}
             className="w-full bg-[#0056D2] text-white font-semibold py-2 rounded-lg hover:bg-[#0045A5] transition-all shadow-md"
           >
             Log In

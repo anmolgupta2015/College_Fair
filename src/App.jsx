@@ -5,7 +5,6 @@ import SignupPage from './authentication/signup';
 import LoginPage from './authentication/login';
 import ProfilePage from './profile';
 import MainPage from './mainPage';
-import Item from './item';
 import ItemList from './itemslist';
 import AddItem from './addItem';
 import ProductDetails from './ProductDetails/ProductDetails';
@@ -17,7 +16,8 @@ import PreviousPaper from "./PreviousPaper/previousPaperUpload"
 import PreviousPaperComponent from './PreviousPaper/PreviousPaper'
 import Paper from './PreviousPaper/paper'
 import QuestionPaperFeature from './questionPaperFeature';
-
+import { Toaster } from "@/components/ui/sonner";
+import RemoveItem from './removeItem'
 const ProtectedRoute = ({ element }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -35,15 +35,17 @@ const ProtectedRoute = ({ element }) => {
 
     return user ? element : <Navigate to="/login" />;
 };
-
 const App = () => {
   return (
+    <>
+    
     <Router>
       <Routes>
         {/* Public Routes */}
+
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/addItem" element={<AddItem />} />
+        <Route path="/addItem" element={<ProtectedRoute element={<AddItem />} />}/>
         <Route path="/itemlist/product/:productId" element={<ProductDetails />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/profile/:RouteuserId" element={<ProfilePage MyProfile = "false" />} />
@@ -55,6 +57,7 @@ const App = () => {
         <Route path="/profile" element={<ProtectedRoute element={<ProfilePage MyProfile = "true" />} />} />
         <Route path="/rental" element={<RentalOption />} />
         <Route path="/button" element={<ButtonClick />}  />
+         <Route path="/removeitem" element={<RemoveItem />}  />
         <Route path="/question_paper/question_paper_upload" element={<PreviousPaper />}  />
         <Route path="/question_paper" element={<QuestionPaperFeature />}  />
         <Route path="/question_paper/question_paper_browse" element={<PreviousPaperComponent />}  />
@@ -63,6 +66,7 @@ const App = () => {
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
+    </>
   );
 };
 
