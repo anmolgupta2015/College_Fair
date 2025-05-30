@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { db, auth } from "../src/firebase/config"
-import { collection, addDoc, serverTimestamp } from "firebase/firestore"
+import { collection, addDoc, serverTimestamp,updateDoc, doc, increment} from "firebase/firestore"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -143,17 +143,16 @@ export default function ListingPage() {
         createdAt: serverTimestamp(),
         userId: auth.currentUser.uid,
       })
-      toast({
-      title: "Listing Created ✅",
-      description: "Your listing has been created successfully!",
-      });
+
+      alert("Your listing has been created successfully!");
+      const userRef = doc(db, "users", auth.currentUser.uid);
+    await updateDoc(userRef, {
+      itemsSold: increment(1),
+    });
     } catch (error) {
-      console.error("Error adding document: ", error)
-      toast({
-    variant: "destructive",
-    title: "Error ❌",
-    description: "Failed to create listing. Please try again.",
-  });
+    console.log(error);
+    alert("Failed to create listing. Please try again.");
+    
     } finally{
       setLoading(false);
     }
