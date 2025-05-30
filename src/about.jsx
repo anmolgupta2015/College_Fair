@@ -435,7 +435,7 @@ export default function AboutUs() {
                           </svg>
                           <div>
                             <p className="text-sm text-purple-200">Email</p>
-                            <p className="font-medium">anmolgupta1502@gmail.com</p>
+                            <p className="font-medium">collegefairtech@gmail.com</p>
                           </div>
                         </div>
                         <div className="flex items-start">

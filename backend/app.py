@@ -44,7 +44,7 @@ def send_query_email():
     <p><strong>Message:</strong><br>{body}</p>
     """
 
-    msg = Message(subject="New query Recieved",recipients=['anmolgupta1502@gmail.com'],html = html_content)
+    msg = Message(subject="New query Recieved",recipients=['collegefairtech@gmail.com'],html = html_content)
     try :
       mail.send(msg)
       return jsonify({"message": "Query Recieved! Tech team is out to get you :-) "}), 200

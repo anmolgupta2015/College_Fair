@@ -613,15 +613,15 @@ export default function ListingPage() {
                           <SelectValue placeholder="Select a location" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="north-campus">North Campus</SelectItem>
-                          <SelectItem value="south-dorms">South Dorms</SelectItem>
-                          <SelectItem value="west-apartments">West Apartments</SelectItem>
-                          <SelectItem value="east-dorms">East Dorms</SelectItem>
+                          <SelectItem value="NAB">NAB</SelectItem>
+                          <SelectItem value="pec-market">PEC market</SelectItem>
+                          <SelectItem value="DSA">DSA Office</SelectItem>
+                          <SelectItem value="Kurukshetra-Hostel">Kurukshetra Hostel</SelectItem>
                           <SelectItem value="library">Library</SelectItem>
-                          <SelectItem value="science-building">Science Building</SelectItem>
-                          <SelectItem value="math-building">Math Building</SelectItem>
-                          <SelectItem value="sports-center">Sports Center</SelectItem>
-                          <SelectItem value="student-union">Student Union</SelectItem>
+                          <SelectItem value="Himalaya-Hostel">Himalaya Hostel</SelectItem>
+                          <SelectItem value="Aravalli-Hostel">Aravalli Hostel</SelectItem>
+                          <SelectItem value="Kalpana-Chawla-Hostel">Kalpana Chawla Hostel</SelectItem>
+                          <SelectItem value="Centrary-Hall">Centrary Hall</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
