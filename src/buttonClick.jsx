@@ -31,7 +31,7 @@ const BuyButton = ({listing,payloadRent}) => {
     product_link: window.location.href,// Replace dynamically
 
     payloadRent: payloadRent,
-    isSell : listing.listingType === "sell"
+    isSell : listing.listingType === "sell" || listing.listingType === "donate"
   };
  //console.log(payload)
   useEffect(() => {
@@ -111,7 +111,7 @@ const BuyButton = ({listing,payloadRent}) => {
 
     try {
       setLoading(true);
-      const response = await fetch("https://college-fair.onrender.com/send-order-email", {
+      const response = await fetch("http://127.0.0.1:5000/send-order-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
