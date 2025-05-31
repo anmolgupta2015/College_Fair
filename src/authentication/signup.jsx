@@ -20,7 +20,7 @@ const SignupPage = () => {
           let Email = userCredentials.email;
            Email  =  Email.slice(-10);
           // console.log(Email);
-          if(Email != "pec.edu.in"){
+         if(Email != "pec.edu.in"){
             setError("Please Register with college e-mail id only");
             return;
            }
@@ -30,11 +30,11 @@ const SignupPage = () => {
             const userCredential = await createUserWithEmailAndPassword(auth, userCredentials.email, userCredentials.password);
             const user = userCredential.user;
 
-            console.log("User signed up with UID:", user.uid); 
+       //    console.log(user);
 
             // Store user data in Firestore using the correct UID
             await setDoc(doc(db, "users", user.uid), {
-                fullName: userCredential.user.displayName || "New User",
+                fullName: userCredentials.fullName || "New User",
                 email: userCredential.user.email,
                 profilePic: "",
                 collegeName: "",
