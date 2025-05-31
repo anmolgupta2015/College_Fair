@@ -69,7 +69,7 @@ useEffect(() => {
           // Fetch ratings from subcollection
           const ratingsSnapshot = await getDocs(collection(userDocRef, "ratings"))
           const ratings = ratingsSnapshot.docs.map(doc => doc.data())
-          console.log(ratings);
+         // console.log(ratings);
           setUserRating(ratings);
           const average = calculateAverageRating(ratings)
           //console.log(average);

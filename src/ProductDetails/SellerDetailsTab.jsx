@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom"
 
 export default function SellerDetails({listing}){
   const navigate  = useNavigate();
- console.log(listing);
+ //console.log(listing);
 
 const [seller, setSeller] = useState(null);
  useEffect(() => {

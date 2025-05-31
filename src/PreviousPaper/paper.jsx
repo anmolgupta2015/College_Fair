@@ -335,7 +335,7 @@ function PaperDetails() {
       
          
         </div>
-        <CommentSection/>
+      
       </div>
    
   )

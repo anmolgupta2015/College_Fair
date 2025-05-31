@@ -261,12 +261,12 @@ export default function ListingPage() {
                             <SelectItem value="electronics">Electronics</SelectItem>
                             <SelectItem value="furniture">Furniture</SelectItem>
                             <SelectItem value="clothing">Clothing</SelectItem>
-                            <SelectItem value="notes">Notes & Study Guides</SelectItem>
-                            <SelectItem value="tickets">Event Tickets</SelectItem>
+                            <SelectItem value="notes-&-guides">Notes & Study Guides</SelectItem>
+                            <SelectItem value="event-tickets">Event Tickets</SelectItem>
                             <SelectItem value="appliances">Appliances</SelectItem>
                             <SelectItem value="transportation">Transportation</SelectItem>
-                            <SelectItem value="food">Food & Drinks</SelectItem>
-                            <SelectItem value="misc">Miscellaneous</SelectItem>
+                            <SelectItem value="food-&-drinks">Food & Drinks</SelectItem>
+                            <SelectItem value="miscellaneous">Miscellaneous</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
