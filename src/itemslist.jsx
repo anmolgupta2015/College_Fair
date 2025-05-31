@@ -106,8 +106,7 @@ export default function ProductListPage() {
     return matchesSearch && matchesCategory
   })
 
-   console.log(filteredProducts);
-
+ 
   if (loading) {
     return <p className="text-center mt-12 text-lg">Loading products...</p>
   }

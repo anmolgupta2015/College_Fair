@@ -1,7 +1,6 @@
 import { useState } from "react";
 export default function AboutUs() {
-
-  
+const [loading,setLoading] = useState(false);
   /*try {
     const response = await fetch("http://localhost:5000/send-order-email", {
       method: "POST",
@@ -32,7 +31,7 @@ export default function AboutUs() {
 
   async function handleSubmit(e){
     e.preventDefault();
-    
+    setLoading(true);
     try{
       const response = await fetch("https://college-fair.onrender.com/send-query-email",{
         method : "POST",
@@ -48,10 +47,12 @@ export default function AboutUs() {
     catch(error){
       alert("Error Sending mail");
       console.log(error.message);
+    } finally{
+      setLoading(false);
     }
   }
 
-  console.log(formData);
+  
  
     return (
       <div className="min-h-screen bg-white">
@@ -413,6 +414,7 @@ export default function AboutUs() {
                         <button
                           type="submit"
                           onClick={handleSubmit}
+                          disabled={loading}
                           className="w-full px-6 py-3 rounded-lg bg-purple-600 text-white font-medium hover:bg-purple-700 transition-colors shadow-lg hover:shadow-purple-200"
                         >
                           Send Message

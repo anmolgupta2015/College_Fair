@@ -47,7 +47,7 @@ const BuyButton = ({listing,payloadRent}) => {
           if (buyerDoc.exists()) {
             const buyerInfo = buyerDoc.data();
             setBuyerData(buyerInfo);
-            console.log("Buyer Data:", buyerInfo);
+          //  console.log("Buyer Data:", buyerInfo);
           } else {
             console.error("No user data found in Firestore for buyer");
           }
@@ -70,7 +70,7 @@ const BuyButton = ({listing,payloadRent}) => {
         if (sellerDoc.exists()) {
           const sellerInfo = sellerDoc.data();
           setSellerData(sellerInfo);
-          console.log("Seller Data:", sellerInfo);
+         // console.log("Seller Data:", sellerInfo);
         } else {
           console.error("No user data found in Firestore for seller");
         }

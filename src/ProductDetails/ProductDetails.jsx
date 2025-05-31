@@ -22,7 +22,7 @@ export default function ListingPage() {
   // Fetch product from Firestore
   const { productId } = useParams()
   const navigate = useNavigate()
-  console.log(productId)
+  //console.log(productId)
   useEffect(() => {
     const fetchProduct = async () => {
       if (!productId) return
