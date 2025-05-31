@@ -1,5 +1,5 @@
 export default function Details({ listing }) {
-    console.log(listing)
+   // console.log(listing)
   
     return (
       <>

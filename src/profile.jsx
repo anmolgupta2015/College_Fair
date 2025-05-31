@@ -31,7 +31,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useParams } from "react-router-dom"
-
+import { useNavigate } from "react-router-dom"
 const auth = getAuth()
 const db = getFirestore()
 
@@ -48,12 +48,14 @@ export default function ProfilePage({ MyProfile }) {
   const [currentUser, setCurrentUser] = useState(null)
 
   const { RouteuserId } = useParams()
-
+  
+  const navigate = useNavigate();
 
 
 
 useEffect(() => {
   const unsubscribe = onAuthStateChanged(auth, async (user) => {
+  //  console.log(user);
     if (user) {
       setUserId(user.uid)
       setCurrentUser(user)
@@ -89,13 +91,18 @@ useEffect(() => {
       }
 
     } else {
-      setProfile(null)
+      //setProfile(null)
+      alert("Please login first before viewing anyones profile");
+      navigate("/login");
+      return;
+      
     }
   })
 
   return () => unsubscribe()
 }, [RouteuserId])
 
+ 
   const calculateAverageRating = (ratings) => {
     if (ratings.length === 0) return 0
     const sum = ratings.reduce((acc, rating) => acc + rating.rating, 0)
@@ -230,13 +237,9 @@ const handleRatingSubmit = async () => {
     return stars
   }
 
-  if (!profile) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
-      </div>
-    )
-  }
+  
+
+
 
   const isOwnProfile = MyProfile === "true"
   const canRate = !isOwnProfile && userId && userId !== (RouteuserId || userId)
@@ -295,9 +298,9 @@ const handleRatingSubmit = async () => {
                   {/* Profile Image */}
                   <div className="relative flex-shrink-0">
                     <Avatar className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 border-2 sm:border-4 border-white shadow-xl">
-                      <AvatarImage src={profile.profileImage || "/placeholder.svg"} alt={profile.fullName} />
+                      <AvatarImage src={profile?.profileImage || "/placeholder.svg"} alt={profile?.fullName} />
                       <AvatarFallback className="text-lg sm:text-xl md:text-2xl font-bold bg-gradient-to-br from-blue-500 to-purple-500 text-white">
-                        {profile.fullName?.charAt(0) || "U"}
+                        U
                       </AvatarFallback>
                     </Avatar>
 
@@ -327,7 +330,7 @@ const handleRatingSubmit = async () => {
                       />
                     ) : (
                       <h1 className="text-lg sm:text-2xl md:text-3xl font-bold mb-2 break-words">
-                        {profile.fullName || "No Name"}
+                        {profile?.fullName || "No Name"}
                       </h1>
                     )}
 
@@ -343,18 +346,18 @@ const handleRatingSubmit = async () => {
                             placeholder="Year"
                           />
                         ) : (
-                          `Batch ${profile.yearofStudy || "N/A"}`
+                          `Batch ${profile?.yearofStudy || "N/A"}`
                         )}
                       </Badge>
 
                       <div className="flex items-center gap-1">
                         {renderStars(
-                          Number.parseFloat(profile.averageRating) || 0,
+                          Number.parseFloat(profile?.averageRating) || 0,
                           false,
                           "w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5",
                         )}
                         <span className="ml-1 font-medium text-xs sm:text-sm">
-                          {profile.averageRating || "0.0"} ({profile.totalRatings || 0})
+                          {profile?.averageRating || "0.0"} ({profile?.totalRatings || 0})
                         </span>
                       </div>
                     </div>
@@ -371,12 +374,12 @@ const handleRatingSubmit = async () => {
                             placeholder="College"
                           />
                         ) : (
-                          <span className="truncate max-w-32 sm:max-w-none">{profile.collegeName || "College"}</span>
+                          <span className="truncate max-w-32 sm:max-w-none">{profile?.collegeName || "College"}</span>
                         )}
                       </div>
                       <div className="flex items-center gap-1">
                         <Package className="h-3 w-3 sm:h-4 sm:w-4" />
-                        {profile.itemsSold || 0} items sold
+                        {profile?.itemsSold || 0} items sold
                       </div>
                     </div>
                   </div>
@@ -394,13 +397,13 @@ const handleRatingSubmit = async () => {
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
               <Card className="p-3 sm:p-4 text-center border-0 shadow-lg bg-gradient-to-br from-blue-50 to-blue-100">
                 <Award className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 mx-auto mb-2" />
-                <div className="text-lg sm:text-2xl font-bold text-blue-700">{profile.averageRating || "0.0"}</div>
+                <div className="text-lg sm:text-2xl font-bold text-blue-700">{profile?.averageRating || "0.0"}</div>
                 <div className="text-xs sm:text-sm text-blue-600">Average Rating</div>
               </Card>
 
               <Card className="p-3 sm:p-4 text-center border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100">
                 <TrendingUp className="h-6 w-6 sm:h-8 sm:w-8 text-green-600 mx-auto mb-2" />
-                <div className="text-lg sm:text-2xl font-bold text-green-700">{profile.itemsSold || 0}</div>
+                <div className="text-lg sm:text-2xl font-bold text-green-700">{profile?.itemsSold || 0}</div>
                 <div className="text-xs sm:text-sm text-green-600">Items Sold</div>
               </Card>
             </div>
@@ -411,7 +414,7 @@ const handleRatingSubmit = async () => {
                 <div className="space-y-3">
                   <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-sm sm:text-base py-2 sm:py-3">
                     <MessageCircle className="h-4 w-4 mr-2" />
-                    <span className="truncate">Message {profile.fullName?.split(" ")[0]}</span>
+                    <span className="truncate">Message {profile?.fullName?.split(" ")[0]}</span>
                   </Button>
 
                   <div className="flex gap-2">
@@ -490,7 +493,7 @@ const handleRatingSubmit = async () => {
                             className="mt-1 text-sm"
                           />
                         ) : (
-                          <div className="text-gray-600 text-sm break-all">{profile.email || "Not provided"}</div>
+                          <div className="text-gray-600 text-sm break-all">{profile?.email || "Not provided"}</div>
                         )}
                       </div>
                     </div>
@@ -507,7 +510,7 @@ const handleRatingSubmit = async () => {
                             className="mt-1 text-sm"
                           />
                         ) : (
-                          <div className="text-gray-600 text-sm">{profile.phone || "Not provided"}</div>
+                          <div className="text-gray-600 text-sm">{profile?.phone || "Not provided"}</div>
                         )}
                       </div>
                     </div>
@@ -525,7 +528,7 @@ const handleRatingSubmit = async () => {
                           />
                         ) : (
                           <div className="text-gray-600 text-sm break-words">
-                            {profile.collegeName || "Not provided"}
+                            {profile?.collegeName || "Not provided"}
                           </div>
                         )}
                       </div>
@@ -545,10 +548,10 @@ const handleRatingSubmit = async () => {
                       </div>
                     )}
 
-                    {!isEditing && profile.bio && (
+                    {!isEditing && profile?.bio && (
                       <div className="p-3 rounded-lg bg-gray-50">
                         <div className="font-medium mb-2 text-sm sm:text-base">Bio</div>
-                        <div className="text-gray-600 text-sm break-words">{profile.bio}</div>
+                        <div className="text-gray-600 text-sm break-words">{profile?.bio}</div>
                       </div>
                     )}
                   </div>
@@ -556,8 +559,8 @@ const handleRatingSubmit = async () => {
 
                 <TabsContent value="reviews" className="p-3 sm:p-6">
   <div className="space-y-3 sm:space-y-4">
-    {profile.ratings && profile.ratings.filter(r => r.comment && r.comment.trim() !== "").length > 0 ? (
-      profile.ratings
+    {profile?.ratings && profile?.ratings.filter(r => r.comment && r.comment.trim() !== "").length > 0 ? (
+      profile?.ratings
         .filter(rating => rating.comment && rating.comment.trim() !== "")
         .map((rating, index) => (
           <div key={index} className="p-3 sm:p-4 rounded-lg border bg-gray-50">

@@ -12,9 +12,11 @@ import { FileText, Download, BookOpen, ChevronLeft, ChevronRight, Bookmark, Shar
 function PaperDetails() {
   const [paper, setPaper] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [load1,setload1] = useState(false);
   const [error, setError] = useState(null)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const { paperId } = useParams()
+
 
   useEffect(() => {
     const fetchPaper = async () => {
@@ -23,24 +25,26 @@ function PaperDetails() {
         setLoading(false)
         return
       }
-
+      
+      
       try {
         const paperRef = doc(db, "questionPaper", paperId)
         const paperSnap = await getDoc(paperRef)
 
         if (paperSnap.exists()) {
           const paperData = paperSnap.data()
-          console.log(paperData)
+        //  console.log(paperData)
           setPaper(paperData)
         } else {
-          console.log(`Paper with ID ${paperId} not found.`)
+         // console.log(`Paper with ID ${paperId} not found.`)
           setError(`Paper with ID ${paperId} not found.`)
         }
       } catch (error) {
         console.error("Error fetching paper:", error)
         setError("Failed to load paper details. Please try again later.")
       } finally {
-        setLoading(false)
+        setLoading(false);
+      
       }
     }
 
@@ -73,7 +77,7 @@ function PaperDetails() {
    
      async function handleDownload(){
   
-
+   setload1(true);
     try {
       const response = await fetch("https://college-fair.onrender.com/download_pdf", {
         method: "POST",
@@ -99,6 +103,8 @@ function PaperDetails() {
   } catch (error) {
     alert("Error downloading PDF!");
     console.error(error);
+  } finally{
+    setload1(false);
   }
   };
   const nextImage = () => {
@@ -251,9 +257,9 @@ function PaperDetails() {
                 
                  <ShareButton/>
                 </div>
-                <button onClick = {handleDownload} className="px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg shadow-sm transition-colors flex items-center gap-2">
+                <button onClick = {handleDownload}  disabled={load1} className="px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg shadow-sm transition-colors flex items-center gap-2">
                   <Download className="h-4 w-4" />
-                  <span>Download PDF</span>
+                  <span>{(load1 === true) ? "Downloading" : "Download PDF"}</span>
                 </button>
               </div>
             </div>
