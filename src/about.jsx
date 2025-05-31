@@ -1,6 +1,6 @@
 import { useState } from "react";
 export default function AboutUs() {
-const [loading,setLoading] = useState(false);
+const [loading,setloading] = useState(false);
   /*try {
     const response = await fetch("http://localhost:5000/send-order-email", {
       method: "POST",
@@ -22,7 +22,7 @@ const [loading,setLoading] = useState(false);
   })
   function handleChange(e){
     const {id,value} = e.target;
-    console.log(id,value);
+   // console.log(id,value);
     setformData((prevData)=>({
       ...prevData,
     [id]:value,
@@ -31,7 +31,7 @@ const [loading,setLoading] = useState(false);
 
   async function handleSubmit(e){
     e.preventDefault();
-    setLoading(true);
+    setloading(true);
     try{
       const response = await fetch("https://college-fair.onrender.com/send-query-email",{
         method : "POST",
@@ -48,7 +48,7 @@ const [loading,setLoading] = useState(false);
       alert("Error Sending mail");
       console.log(error.message);
     } finally{
-      setLoading(false);
+      setloading(false);
     }
   }
 
@@ -417,7 +417,7 @@ const [loading,setLoading] = useState(false);
                           disabled={loading}
                           className="w-full px-6 py-3 rounded-lg bg-purple-600 text-white font-medium hover:bg-purple-700 transition-colors shadow-lg hover:shadow-purple-200"
                         >
-                          Send Message
+                          {loading ? "Sending..." : "Send Message"}
                         </button>
                       </div>
                     </form>
