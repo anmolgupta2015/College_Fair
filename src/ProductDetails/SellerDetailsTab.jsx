@@ -41,7 +41,7 @@ const [seller, setSeller] = useState(null);
   const sellerDetails = {
     name: seller?.fullName || "Unknown Seller",
     avatar: seller?.profileImage || "/placeholder.svg",
-    rating: seller?.Rating || 0,
+    rating: seller?.averageRating || 0,
     memberSince: seller?.createdAt || "Unknown",
     responseRate: seller?.email || "Unknown",
     responseTime: seller?.phone || "Unknown",
@@ -83,7 +83,7 @@ return (
            ))}
          </div>
          <span className="text-sm ml-1 text-gray-600">
-           {sellerDetails.rating?.toFixed(1) || "N/A"}
+           {Number(sellerDetails.rating)?.toFixed(1) || "N/A"}
          </span>
        </div>
  

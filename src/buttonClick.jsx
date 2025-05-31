@@ -14,7 +14,7 @@ const BuyButton = ({listing,payloadRent}) => {
   //const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  console.log(payloadRent);
+  //console.log(payloadRent);
   const [userId, setUserId] = useState(null);
   const [buyerData, setBuyerData] = useState(null);
   const [sellerData, setSellerData] = useState(null);
@@ -33,7 +33,7 @@ const BuyButton = ({listing,payloadRent}) => {
     payloadRent: payloadRent,
     isSell : listing.listingType === "sell"
   };
- console.log(payload)
+ //console.log(payload)
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
