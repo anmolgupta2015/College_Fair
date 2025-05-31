@@ -78,13 +78,17 @@ const LoginPage = () => {
               required
             />
           </div>
-          <button
-            type="submit"
-            disabled = {loading}
-            className="w-full bg-[#0056D2] text-white font-semibold py-2 rounded-lg hover:bg-[#0045A5] transition-all shadow-md"
-          >
-            Log In
-          </button>
+        <button
+  type="submit"
+  disabled={loading}
+  className={`w-full font-semibold py-2 rounded-lg transition-all shadow-md ${
+    loading
+      ? "bg-gray-400 cursor-not-allowed"
+      : "bg-[#0056D2] text-white hover:bg-[#0045A5]"
+  }`}
+>
+  {loading ? "Logging in..." : "Log In"}
+</button>
         </form>
         <p className="text-center text-gray-600 text-sm mt-4">
           Don't have an account? <a href="/signup" className="text-[#FF9800] font-medium hover:underline">Sign Up</a>

@@ -8,6 +8,7 @@ import { Timestamp,doc, setDoc } from "firebase/firestore"; // Use setDoc for co
 const SignupPage = () => {
     const [userCredentials, setUserCredentials] = useState({});
     const [error, setError] = useState("");
+    const [loading,setloading] = useState(false);
     const navigate = useNavigate();  
 
     function handleChange(e) {
@@ -17,10 +18,12 @@ const SignupPage = () => {
     async function handleSignup(e) {
         e.preventDefault();
         setError("");
+        setloading(true);
           let Email = userCredentials.email;
            Email  =  Email.slice(-10);
           // console.log(Email);
          if(Email != "pec.edu.in"){
+            setloading(false);
             setError("Please Register with college e-mail id only");
             return;
            }
@@ -46,10 +49,12 @@ const SignupPage = () => {
                 wishlist: []
             });
 
-            navigate("/login");  
+            navigate("/");  
         } catch (error) {
             console.error("Signup error:", error.message);
             setError(error.message);
+        }finally{
+            setloading(false);
         }
     }
 
@@ -72,7 +77,7 @@ const SignupPage = () => {
                         <input onChange={handleChange} name="password" type="password" placeholder="••••••••" required className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" />
                     </div>
                     
-                    <button type="submit" className="w-full bg-blue-500 text-white font-semibold py-2 rounded-lg hover:bg-blue-600 transition">Sign Up</button>
+                    <button type="submit"  disabled={loading} className="w-full bg-blue-500 text-white font-semibold py-2 rounded-lg hover:bg-blue-600 transition"> {loading ? "Signing Up..." : "Sign Up"}</button>
                 </form>
                 {error && <div className="text-red-500 mt-2">{error}</div>}
                 <p className="text-center text-gray-600 text-sm mt-4">Already have an account? <a href="/login" className="text-blue-500 hover:underline">Log in</a></p>
