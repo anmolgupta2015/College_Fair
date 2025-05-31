@@ -44,14 +44,16 @@ export default function ListingPage() {
       {children} <span className="text-red-500">*</span>
     </Label>
   )
-
+   console.log(formData);
   // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target
+    
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }))
+   
   }
 
   const fileUpload = async (event, index) => {
@@ -273,7 +275,7 @@ export default function ListingPage() {
 
                       {listingType === "sell" && (
                         <div className="space-y-2">
-                          <RequiredLabel htmlFor="price">Price ($)</RequiredLabel>
+                          <RequiredLabel htmlFor="price">Price (₹)</RequiredLabel>
                           <Input
                             id="price"
                             name="price"
@@ -318,7 +320,7 @@ export default function ListingPage() {
                     <CardContent className="space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <RequiredLabel htmlFor="rentAmount">Rent Amount ($)</RequiredLabel>
+                          <RequiredLabel htmlFor="rentAmount">Rent Amount (₹)</RequiredLabel>
                           <Input
                             id="rentAmount"
                             name="rentAmount"
@@ -354,7 +356,7 @@ export default function ListingPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <RequiredLabel htmlFor="securityDeposit">Security Deposit ($)</RequiredLabel>
+                        <RequiredLabel htmlFor="securityDeposit">Security Deposit (₹)</RequiredLabel>
                         <Input
                           id="securityDeposit"
                           name="securityDeposit"
@@ -606,7 +608,14 @@ export default function ListingPage() {
                       <RequiredLabel htmlFor="location">Pickup Location</RequiredLabel>
                       <Select
                         value={formData.location}
-                        onValueChange={(value) => handleSelectChange("location", value)}
+                        onValueChange={(value) =>
+    setFormData((prev) => ({
+      ...prev,
+      location: value,
+    }))
+    
+  }
+                       
                         required
                       >
                         <SelectTrigger id="location">
@@ -650,14 +659,7 @@ export default function ListingPage() {
                             ? "Create Rental Listing"
                             : "Offer as Donation"}
                       </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="lg"
-                        className="border-primary text-primary hover:bg-primary/10"
-                      >
-                        Save as Draft
-                      </Button>
+                     
                     </div>
                   </CardContent>
                 </Card>
