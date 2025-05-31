@@ -44,7 +44,7 @@ export default function ListingPage() {
       {children} <span className="text-red-500">*</span>
     </Label>
   )
-   console.log(formData);
+ //  console.log(formData);
   // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target
