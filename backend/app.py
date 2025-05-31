@@ -145,7 +145,7 @@ def send_order_email():
         user_email = data.get('user_email')
         product_owner_email = data.get('product_owner_email')
         product_name = data.get('product_name', 'Unknown Product')
-        price = data.get('product_price', 'N/A')
+        price = data.get('product_price', 0)
         user_name = data.get('user_Name')
         user_phone = data.get('user_phoneNo')
         product_link = data.get('product_link')
