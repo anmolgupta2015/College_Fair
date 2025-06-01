@@ -39,7 +39,7 @@ export default function SellerDetails({ listing }) {
     name: seller?.fullName || "Unknown Seller",
     avatar: seller?.profileImage || "/placeholder.svg",
     rating: seller?.averageRating || 0,
-    memberSince: seller?.createdAt || "Unknown",
+    memberSince: seller?.createdAt?.toDate().toLocaleDateString() || "Unknown",
     responseRate: seller?.email || "Unknown",
     responseTime: seller?.phone || "Unknown",
   }

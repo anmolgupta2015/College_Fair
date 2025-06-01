@@ -22,11 +22,12 @@ const SignupPage = () => {
           let Email = userCredentials.email;
            Email  =  Email.slice(-10);
           // console.log(Email);
-         if(Email != "pec.edu.in"){
+       /*  if(Email != "pec.edu.in"){
             setloading(false);
             setError("Please Register with college e-mail id only");
             return;
            }
+           */
           
 
         try {
@@ -46,7 +47,7 @@ const SignupPage = () => {
                 Rating: 0,
                 isVerified: false,
                 phone: "",
-                wishlist: []
+                createdAt:Timestamp.now(),
             });
 
             navigate("/");  

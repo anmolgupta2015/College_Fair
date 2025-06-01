@@ -60,9 +60,9 @@ export default function RightColumn({ listing, purchaseType = "buy" }) {
 
           {/* Share & Report */}
           <div className="flex justify-between text-sm pt-4 border-t">
-            <Button variant="ghost" size="sm" className="h-8 px-2 text-blue-500">
+          
               <ShareButton collegeName="PEC" />
-            </Button>
+           
             <Button variant="ghost" size="sm" className="h-8 px-2 text-red-500 hover:bg-red-50">
               <Flag className="h-4 w-4 mr-1" />
               Report
