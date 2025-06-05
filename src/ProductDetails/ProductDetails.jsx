@@ -652,7 +652,11 @@ export default function ListingPage() {
 
         if (productSnap.exists()) {
           const productData = productSnap.data()
-          setListing(productData)
+          setListing({
+            ...productData,
+            id:productId
+          })
+        //  setListing(productData)
 
           // Set default purchase type for donations
           if (productData.isDonation) {

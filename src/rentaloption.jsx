@@ -22,7 +22,7 @@ export default function RentalOptions({ listing }) {
     price : listing.rentAmount,
     
   }
-  console.log(listing)
+ // console.log(listing)
   // Format date for display
   const formatDate = (dateString) => {
     if (!dateString) return "";

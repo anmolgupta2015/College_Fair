@@ -49,7 +49,7 @@ def send_query_email():
       mail.send(msg)
       return jsonify({"message": "Query Recieved! Tech team is out to get you :-) "}), 200
     except :
-        print("Error",(e))
+        print("Error")
         return jsonify({"message":"Failed to send query"}),500
 
 def create_pdf_from_images(image_urls):

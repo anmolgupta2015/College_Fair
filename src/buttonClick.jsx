@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button"
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc, setDoc,updateDoc, increment } from "firebase/firestore";
 import {useState,useEffect} from 'react';
 import { Gift } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -34,6 +34,7 @@ const BuyButton = ({listing,payloadRent}) => {
     isSell : listing.listingType === "sell" || listing.listingType === "donate"
   };
  //console.log(payload)
+ //console.log(listing);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -105,7 +106,7 @@ const BuyButton = ({listing,payloadRent}) => {
     
       if(payloadRent.rentDays == "" || payloadRent.startDate == ""){
         alert("Please Complete the rental form");
-        rent
+       
       }
     }
 
@@ -116,8 +117,15 @@ const BuyButton = ({listing,payloadRent}) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+       if (!response.ok) {
+      throw new Error("Email sending failed");
+      }
 
       const data = await response.json();
+      const producRef = doc(db,"items" , listing.id);
+       await updateDoc(producRef,{
+        interestCount : increment(1)
+      })
      alert("Thank you for your interest! Your details have been shared with the seller. They may reach out to you via email or phone soon.")
     } catch (error) {
       alert("Error sending email");

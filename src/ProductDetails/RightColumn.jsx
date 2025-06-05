@@ -1,9 +1,9 @@
 "use client"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Heart, Flag, Clock, Gift } from "lucide-react"
+import { Heart, Flag, Clock, Gift, Users } from "lucide-react"
 import ShareButton from "./sharebutton"
-import BuyButton from '../buttonClick'
+import BuyButton from "../buttonClick"
 
 export default function RightColumn({ listing, purchaseType = "buy" }) {
   // If the item is a donation, force the purchase type to "donate"
@@ -36,6 +36,22 @@ export default function RightColumn({ listing, purchaseType = "buy" }) {
             )}
           </div>
 
+          {/* Interest Count */}
+          {listing?.interestCount > 0 && (
+            <div className="flex items-center gap-2 p-3 bg-gradient-to-r from-pink-50 to-red-50 border border-pink-200 rounded-lg">
+              <div className="flex items-center gap-1.5">
+                <Heart className="h-4 w-4 text-pink-600 fill-pink-600" />
+                <span className="text-sm font-semibold text-pink-700">{listing.interestCount}</span>
+                <span className="text-sm text-pink-600">
+                  {listing.interestCount === 1 ? "person is" : "people are"} interested
+                </span>
+              </div>
+              <div className="ml-auto">
+                <Users className="h-4 w-4 text-pink-500" />
+              </div>
+            </div>
+          )}
+
           {/* Price */}
           {listing.listingType === "donate" ? (
             <div className="text-3xl font-extrabold text-green-600">Free</div>
@@ -47,22 +63,14 @@ export default function RightColumn({ listing, purchaseType = "buy" }) {
             <div className="text-3xl font-extrabold text-indigo-600">₹{listing?.price || 0}</div>
           )}
 
-
           {/* Actions */}
-        <div className="flex flex-col gap-3 mt-4">
-  {listing.listingType !== 'rent' && (
-    <BuyButton listing={listing} />
-  )}
-
-              
-            
+          <div className="flex flex-col gap-3 mt-4">
+            {listing.listingType !== "rent" && <BuyButton listing={listing} />}
           </div>
 
           {/* Share & Report */}
           <div className="flex justify-between text-sm pt-4 border-t">
-          
-              <ShareButton collegeName="PEC" />
-           
+            <ShareButton collegeName="PEC" />
             <Button variant="ghost" size="sm" className="h-8 px-2 text-red-500 hover:bg-red-50">
               <Flag className="h-4 w-4 mr-1" />
               Report
