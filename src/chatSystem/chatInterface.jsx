@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
-import ChatList from "./ChatList"
-import ChatRoom from "./ChatRoom"
+import ChatList from "./chatList"
+import ChatRoom from "./chatRoom"
 
 const auth = getAuth()
 
