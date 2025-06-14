@@ -1,15 +1,22 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { NavLink, useNavigate, useLocation } from "react-router-dom"
-import { ShoppingBag, Store, Menu, X, User, ChevronDown } from "lucide-react"
+import { Store, Menu, X, User, ChevronDown, MessageCircle } from "lucide-react"
 import { auth } from "./firebase/config"
 import { signOut } from "firebase/auth"
+import { getFirestore, collection, query, where, getDocs, orderBy } from "firebase/firestore"
+
+const db = getFirestore()
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const [isChatOpen, setIsChatOpen] = useState(false)
   const [currentUser, setCurrentUser] = useState(null)
+  const [chats, setChats] = useState([])
+  const [loading, setLoading] = useState(false)
+  const chatRef = useRef(null)
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -27,6 +34,7 @@ const Navbar = () => {
     return () => unsubscribe()
   }, [])
 
+ 
   const handleLogout = async () => {
     try {
       await signOut(auth)
@@ -35,6 +43,12 @@ const Navbar = () => {
     } catch (error) {
       console.error("Error logging out:", error)
     }
+  }
+
+  
+  const navigateToAllChats = () => {
+    setIsChatOpen(false)
+    navigate("/chating")
   }
 
   return (
@@ -109,6 +123,22 @@ const Navbar = () => {
                 <Store size={15} /> Sell Item
               </NavLink>
 
+              {currentUser && (
+                <div className="relative" ref={chatRef}>
+                  <NavLink
+                     to="/chating"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-gray-700 rounded hover:bg-gray-50 transition-colors duration-200"
+                    aria-expanded={isChatOpen}
+                    aria-haspopup="true"
+                  >
+                    <MessageCircle size={15} />
+                    <span className="text-sm font-medium">Messages</span>
+                  </NavLink>
+
+                 
+                </div>
+              )}
+
               {currentUser ? (
                 <div className="relative">
                   <button
@@ -134,7 +164,7 @@ const Navbar = () => {
                       >
                         My Profile
                       </NavLink>
-                       <NavLink
+                      <NavLink
                         to="/removeItem"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                         onClick={() => setIsUserMenuOpen(false)}
@@ -169,20 +199,30 @@ const Navbar = () => {
                   </NavLink>
                 </div>
               )}
-
-              
             </div>
           </div>
 
           {/* Mobile menu button */}
           <div className="flex items-center space-x-3 lg:hidden">
             {currentUser && (
-              <NavLink to="/profile" className="p-1.5 text-gray-700 rounded hover:bg-gray-50" aria-label="Your profile">
-                <User size={18} />
-              </NavLink>
+              <>
+                <NavLink
+                  to="/chating"
+                 
+                  className="p-1.5 text-gray-700 rounded hover:bg-gray-50"
+                  aria-label="Messages"
+                >
+                  <MessageCircle size={18} />
+                </NavLink>
+                <NavLink
+                  to="/profile"
+                  className="p-1.5 text-gray-700 rounded hover:bg-gray-50"
+                  aria-label="Your profile"
+                >
+                  <User size={18} />
+                </NavLink>
+              </>
             )}
-
-           
 
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -229,7 +269,7 @@ const Navbar = () => {
               to="/question_paper"
             >
               Previous Year Papers
-            </NavLink>            
+            </NavLink>
             <NavLink
               className={({ isActive }) =>
                 `block px-3 py-2 rounded text-base font-medium ${
@@ -240,6 +280,18 @@ const Navbar = () => {
             >
               About
             </NavLink>
+            {currentUser && (
+              <NavLink
+                className={({ isActive }) =>
+                  `block px-3 py-2 rounded text-base font-medium ${
+                    isActive ? "text-purple-600" : "text-gray-700 hover:text-purple-600"
+                  }`
+                }
+                to="/chating"
+              >
+                Messages
+              </NavLink>
+            )}
           </div>
 
           <div className="px-4 py-3 border-t border-gray-100">
@@ -256,7 +308,7 @@ const Navbar = () => {
                   className="block px-3 py-2 rounded text-base font-medium text-gray-700 hover:text-purple-600"
                 >
                   My Listings
-                </NavLink>              
+                </NavLink>
                 <div className="border-t border-gray-100 my-1"></div>
                 <button
                   onClick={handleLogout}
@@ -288,6 +340,21 @@ const Navbar = () => {
             >
               <Store size={15} className="inline-block mr-2" /> Sell Your Items
             </NavLink>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Chat Dropdown */}
+      {isChatOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50" ref={chatRef}>
+          <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-xl shadow-xl max-h-[70vh] overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="font-semibold text-lg">Messages</h3>
+              <button onClick={() => setIsChatOpen(false)} className="p-1 rounded-full hover:bg-gray-100">
+                <X size={20} />
+              </button>
+            </div>
+            
           </div>
         </div>
       )}

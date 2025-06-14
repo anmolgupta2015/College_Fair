@@ -17,8 +17,12 @@ import PreviousPaperComponent from './PreviousPaper/PreviousPaper'
 import Paper from './PreviousPaper/paper'
 import QuestionPaperFeature from './questionPaperFeature';
 import { Toaster } from "@/components/ui/sonner";
-import RemoveItem from './removeItem'
+import RemoveItem from './removeItem';
+import ChatList from './chatSystem/chatList';
+
+import ChatRoom from './chatSystem/chatRoom';
 import ReactGA from 'react-ga4';
+import ChatInterface from './chatSystem/chatInterface';
 ReactGA.initialize("G-3KHJY2RDS3");  // Replace with your ID
 ReactGA.send("pageview");
 const ProtectedRoute = ({ element }) => {
@@ -53,6 +57,9 @@ const App = () => {
         <Route path="/categories" element={<Categories />} />
         <Route path="/profile/:RouteuserId" element={<ProfilePage MyProfile = "false" />} />
         <Route path="/about" element={<AboutUs />} />
+         <Route path="/chatList" element={<ChatList/>} />
+         <Route path="/chating" element={<ChatInterface/>} />
+         <Route path="//chat/:chatId" element={<ChatRoom/>} />
         {/* Protected Routes */}
         <Route path="/" element={<ItemList />} />
          <Route path="/itemlist" element={<ItemList />}  />

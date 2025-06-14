@@ -131,7 +131,8 @@ export default function ProfilePage({ MyProfile }) {
 
   /*Rating-Submit*/
   const handleRatingSubmit = async () => {
-    if (!userId || !userRating || userId === RouteuserId) return
+    if (!userId || !userRating) return;
+
 
     setIsSubmittingRating(true)
 
@@ -141,7 +142,7 @@ export default function ProfilePage({ MyProfile }) {
         rating: userRating,
         comment: ratingComment,
         timestamp: new Date(),
-        userName: currentUser?.displayName || currentUser?.email || "Anonymous",
+        userName: currentUser?.displayName || "Anonymous",
       }
 
       const targetUserId = RouteuserId

@@ -6,6 +6,7 @@ import { getFirestore, doc, getDoc, setDoc,updateDoc, increment } from "firebase
 import {useState,useEffect} from 'react';
 import { Gift } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import ChatRoom from './chatSystem/chatRoom';
 
 const auth = getAuth();
 const db = getFirestore();
@@ -18,7 +19,10 @@ const BuyButton = ({listing,payloadRent}) => {
   const [userId, setUserId] = useState(null);
   const [buyerData, setBuyerData] = useState(null);
   const [sellerData, setSellerData] = useState(null);
-
+  
+  // 🔥 New state to control ChatRoom rendering
+  const [openChat, setOpenChat] = useState(false);
+  const [chatId, setChatId] = useState(null);
   
   const payload = {
     user_email: (buyerData !== null)?buyerData.email : "", 
@@ -60,6 +64,8 @@ const BuyButton = ({listing,payloadRent}) => {
         setUserId(null);
       }
     });
+
+    //console.log(payload.product_link);
 
     // Fetch Seller data using listing.userId
     const fetchSellerData = async () => {
@@ -112,7 +118,7 @@ const BuyButton = ({listing,payloadRent}) => {
 
     try {
       setLoading(true);
-      const response = await fetch("https://college-fair.onrender.com/send-order-email", {
+     /* const response = await fetch("https://college-fair.onrender.com/send-order-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -123,10 +129,35 @@ const BuyButton = ({listing,payloadRent}) => {
 
       const data = await response.json();
       const producRef = doc(db,"items" , listing.id);
-       await updateDoc(producRef,{
+       await updateDoc(producRef, {
         interestCount : increment(1)
       })
-     alert("Thank you for your interest! Your details have been shared with the seller. They may reach out to you via email or phone soon.")
+      */
+
+       // Create chat document
+      const newChatId = `${listing.id}_${userId}`;
+      const chatRef = doc(db, "chats", newChatId);
+      const chatDoc = await getDoc(chatRef);
+      if (!chatDoc.exists()) {
+        await setDoc(chatRef, {
+          chatId: newChatId,
+          productId: listing.id,
+          productTitle: listing.title,
+          buyerId: userId,
+          sellerId: listing.userId,
+          buyerName: buyerData.fullName,
+          sellerName: sellerData.fullName,
+          lastMessage: "",
+          lastUpdated: new Date().toISOString(),
+        });
+      }
+
+   //   alert("Thank you for your interest! Redirecting to chat...");
+
+      // Open ChatRoom after creating chat
+      setChatId(newChatId);
+      setOpenChat(true);
+
     } catch (error) {
       alert("Error sending email");
       console.error(error);
@@ -134,6 +165,44 @@ const BuyButton = ({listing,payloadRent}) => {
       setLoading(false);
     }
   };
+
+  // ✅ If chat is open, show ChatRoom instead of the button
+  if (openChat && chatId) {
+    return (
+       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 sm:p-6 md:p-8">
+        <div className="relative w-full max-w-3xl max-h-[90vh] bg-white rounded-lg shadow-xl overflow-hidden flex flex-col">
+          <div className="flex items-center justify-between p-4 border-b">
+            <h3 className="text-lg font-medium">Chat with {sellerData?.fullName}</h3>
+            <Button variant="ghost" size="sm" onClick={() => setOpenChat(false)} className="rounded-full h-8 w-8 p-0">
+              <span className="sr-only">Close</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-4 w-4"
+              >
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+              </svg>
+            </Button>
+          </div>
+          <div className="flex-1 overflow-auto">
+            <ChatRoom
+              chatId={chatId}
+              currentUser={{ uid: userId, ...buyerData }}
+              onBackClick={() => setOpenChat(false)}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
   <Button
@@ -162,3 +231,4 @@ const BuyButton = ({listing,payloadRent}) => {
 };
 
 export default BuyButton;
+
