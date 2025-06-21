@@ -15,6 +15,7 @@ function ImageViewer({ images = [], initialIndex = 0, isOpen = false, onClose = 
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 })
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [viewportHeight, setViewportHeight] = useState(0)
 
   const imageRef = useRef(null)
   const containerRef = useRef(null)
@@ -28,6 +29,40 @@ function ImageViewer({ images = [], initialIndex = 0, isOpen = false, onClose = 
       document.mozFullScreenEnabled ||
       document.msFullscreenEnabled)
 
+  // Handle viewport height changes (mobile browser address bar)
+  useEffect(() => {
+    const updateViewportHeight = () => {
+      // Use the actual viewport height, accounting for mobile browser UI
+      const vh = window.innerHeight
+      setViewportHeight(vh)
+      document.documentElement.style.setProperty("--vh", `${vh * 0.01}px`)
+    }
+
+    updateViewportHeight()
+    window.addEventListener("resize", updateViewportHeight)
+    window.addEventListener("orientationchange", updateViewportHeight)
+
+    // Also update on scroll to handle mobile browser address bar hiding/showing
+    let ticking = false
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          updateViewportHeight()
+          ticking = false
+        })
+        ticking = true
+      }
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true })
+
+    return () => {
+      window.removeEventListener("resize", updateViewportHeight)
+      window.removeEventListener("orientationchange", updateViewportHeight)
+      window.removeEventListener("scroll", handleScroll)
+    }
+  }, [])
+
   // Initialize and reset states
   useEffect(() => {
     if (isOpen) {
@@ -37,13 +72,24 @@ function ImageViewer({ images = [], initialIndex = 0, isOpen = false, onClose = 
       setIsLoading(true)
       document.body.style.overflow = "hidden"
 
+      // Prevent mobile scroll bounce
+      document.body.style.position = "fixed"
+      document.body.style.width = "100%"
+      document.body.style.height = "100%"
+
       // Update container size
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect()
-        setContainerSize({ width: rect.width, height: rect.height })
-      }
+      setTimeout(() => {
+        if (containerRef.current) {
+          const rect = containerRef.current.getBoundingClientRect()
+          setContainerSize({ width: rect.width, height: rect.height })
+        }
+      }, 100)
     } else {
       document.body.style.overflow = "unset"
+      document.body.style.position = "unset"
+      document.body.style.width = "unset"
+      document.body.style.height = "unset"
+
       // Exit fullscreen when closing viewer
       if (isFullscreen) {
         exitFullscreen()
@@ -52,6 +98,9 @@ function ImageViewer({ images = [], initialIndex = 0, isOpen = false, onClose = 
 
     return () => {
       document.body.style.overflow = "unset"
+      document.body.style.position = "unset"
+      document.body.style.width = "unset"
+      document.body.style.height = "unset"
     }
   }, [isOpen, initialIndex])
 
@@ -71,9 +120,23 @@ function ImageViewer({ images = [], initialIndex = 0, isOpen = false, onClose = 
       }
     }
 
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
+    const debouncedResize = debounce(handleResize, 100)
+    window.addEventListener("resize", debouncedResize)
+    return () => window.removeEventListener("resize", debouncedResize)
   }, [])
+
+  // Simple debounce function
+  const debounce = (func, wait) => {
+    let timeout
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout)
+        func(...args)
+      }
+      clearTimeout(timeout)
+      timeout = setTimeout(later, wait)
+    }
+  }
 
   // Fullscreen change listener
   useEffect(() => {
@@ -152,8 +215,9 @@ function ImageViewer({ images = [], initialIndex = 0, isOpen = false, onClose = 
     if (!container) return
 
     const containerRect = container.getBoundingClientRect()
-    const availableWidth = containerRect.width - 60 // Leave padding for controls
-    const availableHeight = containerRect.height - 120 // Leave space for top/bottom controls
+    // More conservative padding for mobile
+    const availableWidth = containerRect.width - 40
+    const availableHeight = containerRect.height - 140 // More space for mobile controls
 
     // Calculate scale to fit entire image within container
     const scaleX = availableWidth / naturalWidth
@@ -170,12 +234,12 @@ function ImageViewer({ images = [], initialIndex = 0, isOpen = false, onClose = 
 
   // Gentler zoom increments
   const zoomIn = () => {
-    setScale((prev) => Math.min(prev * 1.15, 4)) // Reduced from 1.3 to 1.15
+    setScale((prev) => Math.min(prev * 1.15, 4))
   }
 
   const zoomOut = () => {
     setScale((prev) => {
-      const newScale = Math.max(prev / 1.15, 0.3) // Reduced from 1.3 to 1.15
+      const newScale = Math.max(prev / 1.15, 0.3)
       if (newScale <= 1) {
         setPosition({ x: 0, y: 0 })
       }
@@ -184,11 +248,6 @@ function ImageViewer({ images = [], initialIndex = 0, isOpen = false, onClose = 
   }
 
   const resetZoom = () => {
-    setScale(1)
-    setPosition({ x: 0, y: 0 })
-  }
-
-  const fitToScreen = () => {
     setScale(1)
     setPosition({ x: 0, y: 0 })
   }
@@ -336,53 +395,77 @@ function ImageViewer({ images = [], initialIndex = 0, isOpen = false, onClose = 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-none max-h-none w-screen h-screen p-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 border-0 overflow-hidden">
-        <div ref={viewerRef} className={`relative w-full h-full ${isFullscreen ? "bg-black" : ""}`}>
-          {/* TOP CONTROLS BAR - Always visible */}
+      <DialogContent
+        className="max-w-none max-h-none w-screen border-0 overflow-hidden p-0"
+        style={{
+          height: viewportHeight ? `${viewportHeight}px` : "100vh",
+          background: "linear-gradient(135deg, rgb(17, 24, 39) 0%, rgb(0, 0, 0) 50%, rgb(17, 24, 39) 100%)",
+        }}
+      >
+        <div
+          ref={viewerRef}
+          className={`relative w-full h-full ${isFullscreen ? "bg-black" : ""}`}
+          style={{
+            height: viewportHeight ? `${viewportHeight}px` : "100vh",
+            // Add safe area padding for devices with notches
+            paddingTop: "env(safe-area-inset-top)",
+            paddingBottom: "env(safe-area-inset-bottom)",
+            paddingLeft: "env(safe-area-inset-left)",
+            paddingRight: "env(safe-area-inset-right)",
+          }}
+        >
+          {/* TOP CONTROLS BAR - Mobile optimized */}
           <div className="absolute top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/95 via-black/80 to-transparent backdrop-blur-xl border-b border-white/10">
-            <div className="flex items-center justify-between p-3 sm:p-4 lg:p-6">
-              {/* Left side - Image counter and info */}
-              <div className="flex items-center gap-3">
-                <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-md rounded-full px-4 py-2 text-white font-semibold border border-white/20 shadow-lg">
-                  <span className="text-sm sm:text-base">
+            <div
+              className="flex items-center justify-between px-2 py-2 sm:p-4 lg:p-6"
+              style={{
+                paddingTop: "max(8px, env(safe-area-inset-top))",
+                paddingLeft: "max(8px, env(safe-area-inset-left))",
+                paddingRight: "max(8px, env(safe-area-inset-right))",
+              }}
+            >
+              {/* Left side - Image counter */}
+              <div className="flex items-center gap-2">
+                <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-md rounded-full px-3 py-1.5 sm:px-4 sm:py-2 text-white font-semibold border border-white/20 shadow-lg">
+                  <span className="text-xs sm:text-sm lg:text-base">
                     {currentIndex + 1} of {images.length}
                   </span>
                 </div>
               </div>
 
               {/* Right side - Controls */}
-              <div className="flex items-center gap-2 sm:gap-3">
+              <div className="flex items-center gap-1 sm:gap-2">
                 {/* Desktop zoom controls */}
                 <div className="hidden sm:flex items-center gap-1 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-md rounded-full px-3 py-2 border border-white/20 shadow-lg">
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={zoomOut}
-                    className="text-white hover:bg-white/20 hover:scale-110 h-9 w-9 p-0 rounded-full transition-all duration-200"
+                    className="text-white hover:bg-white/20 hover:scale-110 h-8 w-8 p-0 rounded-full transition-all duration-200"
                     disabled={scale <= 0.3}
                   >
-                    <ZoomOut className="h-4 w-4" />
+                    <ZoomOut className="h-3.5 w-3.5" />
                   </Button>
-                  <span className="text-white text-sm min-w-[55px] text-center font-semibold px-2">
+                  <span className="text-white text-xs min-w-[50px] text-center font-semibold px-2">
                     {Math.round(scale * 100)}%
                   </span>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={zoomIn}
-                    className="text-white hover:bg-white/20 hover:scale-110 h-9 w-9 p-0 rounded-full transition-all duration-200"
+                    className="text-white hover:bg-white/20 hover:scale-110 h-8 w-8 p-0 rounded-full transition-all duration-200"
                     disabled={scale >= 4}
                   >
-                    <ZoomIn className="h-4 w-4" />
+                    <ZoomIn className="h-3.5 w-3.5" />
                   </Button>
-                  <div className="w-px h-6 bg-white/20 mx-1"></div>
+                  <div className="w-px h-5 bg-white/20 mx-1"></div>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={resetZoom}
-                    className="text-white hover:bg-white/20 hover:scale-110 h-9 w-9 p-0 rounded-full transition-all duration-200"
+                    className="text-white hover:bg-white/20 hover:scale-110 h-8 w-8 p-0 rounded-full transition-all duration-200"
                   >
-                    <RotateCcw className="h-4 w-4" />
+                    <RotateCcw className="h-3.5 w-3.5" />
                   </Button>
                   {/* Fullscreen button */}
                   {isFullscreenSupported && (
@@ -390,36 +473,36 @@ function ImageViewer({ images = [], initialIndex = 0, isOpen = false, onClose = 
                       variant="ghost"
                       size="sm"
                       onClick={toggleFullscreen}
-                      className="text-white hover:bg-white/20 hover:scale-110 h-9 w-9 p-0 rounded-full transition-all duration-200"
+                      className="text-white hover:bg-white/20 hover:scale-110 h-8 w-8 p-0 rounded-full transition-all duration-200"
                       title={isFullscreen ? "Exit Fullscreen (F)" : "Enter Fullscreen (F)"}
                     >
-                      {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                      {isFullscreen ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
                     </Button>
                   )}
                 </div>
 
-                {/* Mobile zoom controls */}
-                <div className="flex sm:hidden items-center gap-2 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-md rounded-full px-3 py-2 border border-white/20 shadow-lg">
+                {/* Mobile zoom controls - Compact */}
+                <div className="flex sm:hidden items-center gap-1 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-md rounded-full px-2 py-1.5 border border-white/20 shadow-lg">
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={zoomOut}
-                    className="text-white hover:bg-white/20 h-10 w-10 p-0 rounded-full transition-all duration-200"
+                    className="text-white hover:bg-white/20 h-8 w-8 p-0 rounded-full transition-all duration-200"
                     disabled={scale <= 0.3}
                   >
-                    <ZoomOut className="h-4 w-4" />
+                    <ZoomOut className="h-3.5 w-3.5" />
                   </Button>
-                  <span className="text-white text-sm min-w-[45px] text-center font-semibold">
+                  <span className="text-white text-xs min-w-[35px] text-center font-semibold">
                     {Math.round(scale * 100)}%
                   </span>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={zoomIn}
-                    className="text-white hover:bg-white/20 h-10 w-10 p-0 rounded-full transition-all duration-200"
+                    className="text-white hover:bg-white/20 h-8 w-8 p-0 rounded-full transition-all duration-200"
                     disabled={scale >= 4}
                   >
-                    <ZoomIn className="h-4 w-4" />
+                    <ZoomIn className="h-3.5 w-3.5" />
                   </Button>
                   {/* Mobile fullscreen button */}
                   {isFullscreenSupported && (
@@ -427,10 +510,10 @@ function ImageViewer({ images = [], initialIndex = 0, isOpen = false, onClose = 
                       variant="ghost"
                       size="sm"
                       onClick={toggleFullscreen}
-                      className="text-white hover:bg-white/20 h-10 w-10 p-0 rounded-full transition-all duration-200"
+                      className="text-white hover:bg-white/20 h-8 w-8 p-0 rounded-full transition-all duration-200"
                       title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
                     >
-                      {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                      {isFullscreen ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
                     </Button>
                   )}
                 </div>
@@ -440,9 +523,9 @@ function ImageViewer({ images = [], initialIndex = 0, isOpen = false, onClose = 
                   variant="ghost"
                   size="sm"
                   onClick={onClose}
-                  className="text-white hover:bg-red-500/20 hover:scale-110 bg-gradient-to-r from-red-500/20 to-red-600/20 backdrop-blur-md rounded-full h-10 w-10 sm:h-11 sm:w-11 p-0 border border-red-500/30 shadow-lg transition-all duration-200"
+                  className="text-white hover:bg-red-500/20 hover:scale-110 bg-gradient-to-r from-red-500/20 to-red-600/20 backdrop-blur-md rounded-full h-8 w-8 sm:h-9 sm:w-9 p-0 border border-red-500/30 shadow-lg transition-all duration-200 ml-1"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -454,18 +537,18 @@ function ImageViewer({ images = [], initialIndex = 0, isOpen = false, onClose = 
             className="absolute inset-0 flex items-center justify-center overflow-hidden"
             style={{
               cursor: scale > 1 ? (isDragging ? "grabbing" : "grab") : "default",
-              paddingTop: "80px",
-              paddingBottom: images.length > 1 ? "100px" : "20px",
-              paddingLeft: "20px",
-              paddingRight: "20px",
+              paddingTop: "70px", // Reduced for mobile
+              paddingBottom: images.length > 1 ? "90px" : "20px", // Reduced for mobile
+              paddingLeft: "10px",
+              paddingRight: "10px",
             }}
           >
             {/* Loading spinner */}
             {isLoading && (
               <div className="absolute inset-0 flex items-center justify-center z-20">
                 <div className="relative">
-                  <div className="w-16 h-16 border-4 border-white/20 border-t-blue-500 rounded-full animate-spin"></div>
-                  <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-r-purple-500 rounded-full animate-spin animate-reverse"></div>
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 border-3 sm:border-4 border-white/20 border-t-blue-500 rounded-full animate-spin"></div>
+                  <div className="absolute inset-0 w-12 h-12 sm:w-16 sm:h-16 border-3 sm:border-4 border-transparent border-r-purple-500 rounded-full animate-spin animate-reverse"></div>
                 </div>
               </div>
             )}
@@ -486,7 +569,7 @@ function ImageViewer({ images = [], initialIndex = 0, isOpen = false, onClose = 
                 objectFit: "contain",
                 transform: `scale(${scale}) translate(${position.x / scale}px, ${position.y / scale}px)`,
                 transformOrigin: "center center",
-                filter: "drop-shadow(0 25px 50px rgba(0,0,0,0.5))",
+                filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.4))",
                 border: "1px solid rgba(255,255,255,0.1)",
               }}
               onMouseDown={handleMouseDown}
@@ -499,46 +582,51 @@ function ImageViewer({ images = [], initialIndex = 0, isOpen = false, onClose = 
             />
           </div>
 
-          {/* NAVIGATION ARROWS - Always visible */}
+          {/* NAVIGATION ARROWS - Mobile optimized */}
           {images.length > 1 && (
             <>
               <Button
                 variant="ghost"
                 size="lg"
                 onClick={goToPrevious}
-                className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 text-white hover:bg-white/20 hover:scale-110 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-md rounded-full h-14 w-14 sm:h-16 sm:w-16 p-0 border border-white/20 shadow-xl transition-all duration-300"
+                className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/20 hover:scale-110 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-md rounded-full h-12 w-12 sm:h-14 sm:w-14 p-0 border border-white/20 shadow-xl transition-all duration-300"
               >
-                <ChevronLeft className="h-6 w-6 sm:h-8 sm:w-8" />
+                <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
               </Button>
 
               <Button
                 variant="ghost"
                 size="lg"
                 onClick={goToNext}
-                className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 text-white hover:bg-white/20 hover:scale-110 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-md rounded-full h-14 w-14 sm:h-16 sm:w-16 p-0 border border-white/20 shadow-xl transition-all duration-300"
+                className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/20 hover:scale-110 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-md rounded-full h-12 w-12 sm:h-14 sm:w-14 p-0 border border-white/20 shadow-xl transition-all duration-300"
               >
-                <ChevronRight className="h-6 w-6 sm:h-8 sm:w-8" />
+                <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
               </Button>
             </>
           )}
 
-          {/* THUMBNAIL STRIP - Always visible */}
+          {/* THUMBNAIL STRIP - Mobile optimized */}
           {images.length > 1 && (
-            <div className="absolute bottom-0 left-0 right-0 z-50 bg-gradient-to-t from-black/95 via-black/80 to-transparent backdrop-blur-xl border-t border-white/10">
-              <div className="p-4 sm:p-6">
-                <div className="flex justify-center gap-2 sm:gap-3 overflow-x-auto scrollbar-hide pb-2">
+            <div
+              className="absolute bottom-0 left-0 right-0 z-50 bg-gradient-to-t from-black/95 via-black/80 to-transparent backdrop-blur-xl border-t border-white/10"
+              style={{
+                paddingBottom: "env(safe-area-inset-bottom)",
+              }}
+            >
+              <div className="p-2 sm:p-4">
+                <div className="flex justify-center gap-1.5 sm:gap-2 overflow-x-auto scrollbar-hide pb-1">
                   {images.map((image, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentIndex(index)}
-                      className={`flex-shrink-0 w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-xl overflow-hidden border-2 transition-all duration-300 shadow-lg ${
+                      className={`flex-shrink-0 w-12 h-12 sm:w-16 sm:h-16 md:w-18 md:h-18 rounded-lg overflow-hidden border-2 transition-all duration-300 shadow-lg ${
                         index === currentIndex
-                          ? "border-blue-400 scale-110 shadow-blue-500/25 ring-2 ring-blue-400/50"
+                          ? "border-blue-400 scale-110 shadow-blue-500/25 ring-1 ring-blue-400/50"
                           : "border-white/30 hover:border-white/70 hover:scale-105 hover:shadow-white/20"
                       }`}
                     >
                       <img
-                        src={image || "/placeholder.svg?height=80&width=80"}
+                        src={image || "/placeholder.svg?height=72&width=72"}
                         alt={`Thumbnail ${index + 1}`}
                         className="w-full h-full object-cover transition-all duration-300"
                       />
@@ -549,10 +637,10 @@ function ImageViewer({ images = [], initialIndex = 0, isOpen = false, onClose = 
             </div>
           )}
 
-          {/* HELP TEXT - Always visible */}
-          <div className="absolute bottom-24 sm:bottom-28 left-1/2 -translate-x-1/2 text-white/60 text-xs sm:text-sm text-center">
-            <div className="bg-black/40 backdrop-blur-sm rounded-full px-4 py-2 border border-white/10">
-              <p className="sm:hidden">Double tap to zoom • Drag to pan • Tap fullscreen</p>
+          {/* HELP TEXT - Mobile optimized */}
+          <div className="absolute bottom-16 sm:bottom-20 left-1/2 -translate-x-1/2 text-white/60 text-xs sm:text-sm text-center px-4">
+            <div className="bg-black/40 backdrop-blur-sm rounded-full px-3 py-1.5 sm:px-4 sm:py-2 border border-white/10">
+              <p className="sm:hidden">Double tap to zoom • Drag to pan</p>
               <p className="hidden sm:block">
                 Double click to zoom • Drag to pan • Arrow keys to navigate • Press F for fullscreen
               </p>
