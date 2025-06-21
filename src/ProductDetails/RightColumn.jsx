@@ -36,21 +36,7 @@ export default function RightColumn({ listing, purchaseType = "buy" }) {
             )}
           </div>
 
-          {/* Interest Count */}
-          {listing?.interestCount > 0 && (
-            <div className="flex items-center gap-2 p-3 bg-gradient-to-r from-pink-50 to-red-50 border border-pink-200 rounded-lg">
-              <div className="flex items-center gap-1.5">
-                <Heart className="h-4 w-4 text-pink-600 fill-pink-600" />
-                <span className="text-sm font-semibold text-pink-700">{listing.interestCount}</span>
-                <span className="text-sm text-pink-600">
-                  {listing.interestCount === 1 ? "person is" : "people are"} interested
-                </span>
-              </div>
-              <div className="ml-auto">
-                <Users className="h-4 w-4 text-pink-500" />
-              </div>
-            </div>
-          )}
+          
 
           {/* Price */}
           {listing.listingType === "donate" ? (
@@ -65,7 +51,7 @@ export default function RightColumn({ listing, purchaseType = "buy" }) {
 
           {/* Actions */}
           <div className="flex flex-col gap-3 mt-4">
-            {listing.listingType !== "rent" && <BuyButton listing={listing} />}
+            {<BuyButton listing={listing} />}
           </div>
 
           {/* Share & Report */}

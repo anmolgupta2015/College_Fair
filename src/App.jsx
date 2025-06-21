@@ -15,7 +15,7 @@ import AboutUs from "./about"
 import PreviousPaper from "./PreviousPaper/previousPaperUpload"
 import PreviousPaperComponent from './PreviousPaper/PreviousPaper'
 import Paper from './PreviousPaper/paper'
-import QuestionPaperFeature from './questionPaperFeature';
+import QuestionPaperFeature from './PreviousPaper/questionPaperFeature';
 import { Toaster } from "@/components/ui/sonner";
 import RemoveItem from './removeItem';
 import ChatList from './chatSystem/chatList';
@@ -23,7 +23,7 @@ import ChatList from './chatSystem/chatList';
 import ChatRoom from './chatSystem/chatRoom';
 import ReactGA from 'react-ga4';
 import ChatInterface from './chatSystem/chatInterface';
-ReactGA.initialize("G-3KHJY2RDS3");  // Replace with your ID
+ReactGA.initialize("G-3KHJY2RDS3"); 
 ReactGA.send("pageview");
 const ProtectedRoute = ({ element }) => {
     const [user, setUser] = useState(null);

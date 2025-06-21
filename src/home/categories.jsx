@@ -22,7 +22,7 @@ export default function Categories() {
 
   const categories = [
     {
-      name: "Textbooks",
+      name: "Study Materials",
       icon: Book,
       count: 245,
       trending: true,
@@ -54,28 +54,12 @@ export default function Categories() {
       color: "from-violet-500 to-purple-500",
     },
     {
-      name: "Notes & Guides",
-      icon: FileText,
-      count: 156,
-      trending: true,
-      limited: false,
-      color: "from-yellow-500 to-amber-500",
-    },
-    {
       name: "Event Tickets",
       icon: Ticket,
       count: 78,
       trending: false,
       limited: true,
       color: "from-pink-500 to-rose-500",
-    },
-    {
-      name: "Accessories",
-      icon: Backpack,
-      count: 112,
-      trending: false,
-      limited: false,
-      color: "from-indigo-500 to-blue-500",
     },
     {
       name: "Transportation",

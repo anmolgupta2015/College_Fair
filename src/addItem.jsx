@@ -38,13 +38,14 @@ export default function ListingPage() {
     pickupInstructions: "",
   })
 
+   //console.log(formData);
   // Add this helper function at the top of your component, after the useState declarations
   const RequiredLabel = ({ htmlFor, children }) => (
     <Label htmlFor={htmlFor} className="flex items-center gap-1">
       {children} <span className="text-red-500">*</span>
     </Label>
   )
- //  console.log(formData);
+   console.log(formData);
   // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -259,13 +260,11 @@ export default function ListingPage() {
                             <SelectValue placeholder="Select a category" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="textbooks">Textbooks</SelectItem>
+                            <SelectItem value="study-materials">Study Material</SelectItem>
                             <SelectItem value="electronics">Electronics</SelectItem>
                             <SelectItem value="furniture">Furniture</SelectItem>
                             <SelectItem value="clothing">Clothing</SelectItem>
-                            <SelectItem value="notes-&-guides">Notes & Study Guides</SelectItem>
                             <SelectItem value="event-tickets">Event Tickets</SelectItem>
-                            <SelectItem value="appliances">Appliances</SelectItem>
                             <SelectItem value="transportation">Transportation</SelectItem>
                             <SelectItem value="food-&-drinks">Food & Drinks</SelectItem>
                             <SelectItem value="miscellaneous">Miscellaneous</SelectItem>
@@ -443,17 +442,7 @@ export default function ListingPage() {
                         />
                       </div>
 
-                      <div className="space-y-2">
-                        <RequiredLabel htmlFor="pickupInstructions">Pickup Instructions</RequiredLabel>
-                        <Textarea
-                          id="pickupInstructions"
-                          name="pickupInstructions"
-                          placeholder="Any specific instructions for pickup? (e.g., 'Available weekdays after 5pm')"
-                          value={formData.pickupInstructions}
-                          onChange={handleChange}
-                          required
-                        />
-                      </div>
+                     
 
                       <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
                         <div className="flex">
@@ -609,12 +598,11 @@ export default function ListingPage() {
                       <Select
                         value={formData.location}
                         onValueChange={(value) =>
-    setFormData((prev) => ({
-      ...prev,
-      location: value,
-    }))
-    
-  }
+                        setFormData((prev) => ({
+                        ...prev,
+                         location: value,
+                          }))
+                       }
                        
                         required
                       >
@@ -622,15 +610,14 @@ export default function ListingPage() {
                           <SelectValue placeholder="Select a location" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="NAB">NAB</SelectItem>
-                          <SelectItem value="pec-market">PEC market</SelectItem>
-                          <SelectItem value="DSA">DSA Office</SelectItem>
-                          <SelectItem value="Kurukshetra-Hostel">Kurukshetra Hostel</SelectItem>
                           <SelectItem value="library">Library</SelectItem>
+                          <SelectItem value="pec-market">PEC market</SelectItem>
+                          <SelectItem value="Nescafe">Nescafe</SelectItem>
+                          <SelectItem value="Kurukshetra-Hostel">Kurukshetra Hostel</SelectItem>
                           <SelectItem value="Himalaya-Hostel">Himalaya Hostel</SelectItem>
                           <SelectItem value="Aravalli-Hostel">Aravalli Hostel</SelectItem>
-                          <SelectItem value="Kalpana-Chawla-Hostel">Kalpana Chawla Hostel</SelectItem>
-                          <SelectItem value="Centrary-Hall">Centrary Hall</SelectItem>
+                          <SelectItem value="KalpanaChawla-Hostel">Kalpana Chawla Hostel</SelectItem>
+                          <SelectItem value="Let's Decide meeting location Over Chat">Let's Decide meeting location Over Chat</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>

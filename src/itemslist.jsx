@@ -60,7 +60,7 @@ export default function ProductListPage() {
           ),
         ]
 
-      //  console.log("User IDs to fetch:", userIds) // Debug to check userIds
+    
 
         await fetchUsers(userIds) // Fetch corresponding user names
 

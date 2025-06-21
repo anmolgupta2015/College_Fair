@@ -3,10 +3,12 @@
 import { useState, useEffect } from "react"
 import { getFirestore, collection, query, where, getDocs, doc, getDoc, onSnapshot } from "firebase/firestore"
 import { formatTimeAgo, getInitials, getAvatarColor } from "./chatUtils"
+import { useNavigate } from "react-router-dom"
 
 const db = getFirestore()
 
 const ChatList = ({ currentUser, selectedChatId, onChatSelect }) => {
+  const navigate = useNavigate();
   const [chats, setChats] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
@@ -40,16 +42,13 @@ const ChatList = ({ currentUser, selectedChatId, onChatSelect }) => {
 
         const allChats = Array.from(chatMap.values())
 
-       
         const unsubscribes = []
 
         allChats.forEach((chat) => {
-          
           const chatUnsubscribe = onSnapshot(doc(db, "chats", chat.id), (chatDoc) => {
             if (chatDoc.exists()) {
               const updatedChatData = { id: chatDoc.id, ...chatDoc.data() }
 
-            
               setChats((prevChats) => {
                 const newChats = prevChats.map((c) => (c.id === chat.id ? { ...c, ...updatedChatData } : c))
                 return newChats.sort((a, b) => {
@@ -91,44 +90,45 @@ const ChatList = ({ currentUser, selectedChatId, onChatSelect }) => {
           unsubscribes.push(chatUnsubscribe, readStatusUnsubscribe)
         })
 
-   const enrichedChats = await Promise.all(
-  allChats.map(async (chat) => {
-    const readRef = doc(db, "chats", chat.id, "readStatus", currentUser.uid)
-    const readSnap = await getDoc(readRef)
+        const enrichedChats = await Promise.all(
+          allChats.map(async (chat) => {
+            const readRef = doc(db, "chats", chat.id, "readStatus", currentUser.uid)
+            const readSnap = await getDoc(readRef)
 
-    const lastReadAt = readSnap.exists()
-      ? readSnap.data().lastReadAt instanceof Date
-        ? readSnap.data().lastReadAt
-        : readSnap.data().lastReadAt?.toDate?.()
-      : null
+            const lastReadAt = readSnap.exists()
+              ? readSnap.data().lastReadAt instanceof Date
+                ? readSnap.data().lastReadAt
+                : readSnap.data().lastReadAt?.toDate?.()
+              : null
 
-    const lastUpdated =
-      chat.lastUpdated instanceof Date
-        ? chat.lastUpdated
-        : chat.lastUpdated?.toDate?.()
+            const lastUpdated = chat.lastUpdated instanceof Date ? chat.lastUpdated : chat.lastUpdated?.toDate?.()
 
-    const isUnread =
-      chat.lastMessageSenderId !== currentUser.uid &&
-      ((lastReadAt && lastUpdated && lastUpdated > lastReadAt) ||
-        (!lastReadAt && lastUpdated))
+            const isUnread =
+              chat.lastMessageSenderId !== currentUser.uid &&
+              ((lastReadAt && lastUpdated && lastUpdated > lastReadAt) || (!lastReadAt && lastUpdated))
 
-    return { ...chat, isUnread, lastUpdated, lastReadAt }
-  })
-)
+            return { ...chat, isUnread, lastUpdated, lastReadAt }
+          }),
+        )
 
-     enrichedChats.sort((a, b) => {
-  const dateA = a.lastUpdated instanceof Date ? a.lastUpdated : null;
-  const dateB = b.lastUpdated instanceof Date ? b.lastUpdated : null;
+        enrichedChats.sort((a, b) => {
+          const dateA = a.lastUpdated instanceof Date ? a.lastUpdated : null
+          const dateB = b.lastUpdated instanceof Date ? b.lastUpdated : null
 
-  if (!dateA && !dateB) return 0;
-  if (!dateA) return 1; // nulls last
-  if (!dateB) return -1;
+          if (!dateA && !dateB) return 0
+          if (!dateA) return 1 // nulls last
+          if (!dateB) return -1
 
-  return dateB - dateA; // descending order
-});
+          return dateB - dateA // descending order
+        })
 
         setChats(enrichedChats)
-        setLoading(false)
+        setTimeout(
+          () => {
+            setLoading(false)
+          },
+          Math.max(500, 0),
+        ) // Minimum 500ms loading time
 
         // Cleanup function
         return () => {
@@ -136,7 +136,12 @@ const ChatList = ({ currentUser, selectedChatId, onChatSelect }) => {
         }
       } catch (error) {
         console.error("Error loading chats:", error)
-        setLoading(false)
+        setTimeout(
+          () => {
+            setLoading(false)
+          },
+          Math.max(500, 0),
+        )
       }
     }
 
@@ -228,36 +233,77 @@ const ChatList = ({ currentUser, selectedChatId, onChatSelect }) => {
 
       <div className="flex-1 overflow-y-auto">
         {loading ? (
-          <div className="p-4 space-y-3">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center space-x-3 p-2 animate-pulse">
-                <div className="w-12 h-12 rounded-full bg-gray-200"></div>
-                <div className="flex-1">
-                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                </div>
-              </div>
-            ))}
+          <div className="flex flex-col items-center justify-center h-full p-8 min-h-[400px]">
+            <div className="flex items-center justify-center w-16 h-16 mb-4">
+              <svg
+                className="animate-spin h-8 w-8 text-purple-600"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            </div>
+            <p className="text-gray-600 font-medium">Loading conversations...</p>
+            <p className="text-gray-400 text-sm mt-1">Please wait while we fetch your messages</p>
           </div>
         ) : filteredChats.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center p-4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="40"
-              height="40"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-gray-300 mb-2"
-            >
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
-            <p className="text-gray-500">
-              {searchQuery ? "No conversations match your search" : "No conversations yet"}
-            </p>
+          <div className="flex flex-col items-center justify-center h-full text-center p-6 min-h-[400px]">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-100 to-violet-100 flex items-center justify-center mb-6">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-purple-600"
+              >
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                <path d="M13 8l-3 3 3 3"></path>
+              </svg>
+            </div>
+            {searchQuery ? (
+              <>
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">No matches found</h3>
+                <p className="text-gray-500 text-sm">Try adjusting your search terms or browse all conversations</p>
+              </>
+            ) : (
+              <>
+                <h3 className="text-xl font-bold text-gray-800 mb-3">Start Your First Conversation!</h3>
+                <p className="text-gray-600 mb-4 max-w-sm leading-relaxed">
+                  Connect with sellers and buyers instantly. Browse products and click the
+                  <span className="inline-flex items-center mx-1 px-2 py-1 bg-purple-100 text-purple-700 rounded-md text-xs font-medium">
+                    💬 Chat
+                  </span>
+                  icon to start chatting.
+                </p>
+                <div className="flex items-center gap-2 text-sm text-purple-600 font-medium" onClick={()=>{navigate('/itemlist')}}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M7 17l9.2-9.2M17 17V7H7"></path>
+                  </svg>
+                  Explore products to get started
+                </div>
+              </>
+            )}
           </div>
         ) : (
           filteredChats.map((chat) => {

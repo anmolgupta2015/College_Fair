@@ -16,7 +16,7 @@ import {
   deleteDoc,
 } from "firebase/firestore"
 import { formatTimeAgo, getInitials, getAvatarColor } from "./chatUtils"
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"
 
 const db = getFirestore()
 
@@ -31,12 +31,14 @@ const ChatRoom = ({ chatId, currentUser, onBackClick, productLink }) => {
   const [images, setImages] = useState([])
   const [isUploading, setIsUploading] = useState(false)
   //const [productLink,setproductLink] = useState("");
+  const [showMarkAsSoldModal, setShowMarkAsSoldModal] = useState(false)
+  const [isProductSold, setIsProductSold] = useState(false)
 
   const messagesEndRef = useRef(null)
   const scrollAreaRef = useRef(null)
   const fileInputRef = useRef(null)
   const hasMarkedAsRead = useRef(false)
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   // Mark chat as read when component mounts and when new messages arrive
   //console.log(productLink);
@@ -90,7 +92,18 @@ const ChatRoom = ({ chatId, currentUser, onBackClick, productLink }) => {
         const chatRef = doc(db, "chats", chatId)
         const chatSnap = await getDoc(chatRef)
         if (chatSnap.exists()) {
-          setChatInfo(chatSnap.data())
+          const chatData = chatSnap.data()
+          setChatInfo(chatData)
+
+          // Check if product is already sold
+          if (chatData.productId) {
+            const productRef = doc(db, "items", chatData.productId)
+            const productSnap = await getDoc(productRef)
+            if (productSnap.exists()) {
+              const productData = productSnap.data()
+              setIsProductSold(productData.sold === true || productData.status === "sold")
+            }
+          }
         } else {
           console.error("Chat not found")
         }
@@ -117,7 +130,7 @@ const ChatRoom = ({ chatId, currentUser, onBackClick, productLink }) => {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }
-  
+
   //console.log(productLink)
   const handleImageUpload = async (event) => {
     const files = event.target.files
@@ -244,6 +257,42 @@ const ChatRoom = ({ chatId, currentUser, onBackClick, productLink }) => {
     }
   }
 
+  const markAsSold = async () => {
+    try {
+      // Update the product status in the products collection
+      const productRef = doc(db, "items", chatInfo.productId)
+      await updateDoc(productRef, {
+        sold: true,
+        status: "sold",
+        soldAt: serverTimestamp(),
+        soldBy: currentUser.uid,
+      })
+
+      // Also update the chat info to reflect the change
+      const chatRef = doc(db, "chats", chatId)
+      await updateDoc(chatRef, {
+        productSold: true,
+        soldAt: serverTimestamp(),
+      })
+
+      // Update local state
+      setIsProductSold(true)
+
+      // Close the modal
+      setShowMarkAsSoldModal(false)
+
+      // Show success message or navigate back
+      if (onBackClick) {
+        setTimeout(() => {
+          onBackClick()
+        }, 1000) // Small delay to show success
+      }
+    } catch (error) {
+      console.error("Error marking product as sold:", error)
+      // You could add error handling here, like showing an error toast
+    }
+  }
+
   const getOtherUserName = () => {
     if (!chatInfo || !currentUser) return ""
     return currentUser.uid === chatInfo.buyerId ? chatInfo.sellerName : chatInfo.buyerName
@@ -316,21 +365,85 @@ const ChatRoom = ({ chatId, currentUser, onBackClick, productLink }) => {
         </div>
 
         {chatInfo?.productTitle && (
-      
-         <div
-    role="button"
-    onClick={() => {
-      console.log(`/itemlist/product/${chatInfo.productId}`);
-      navigate(`/itemlist/product/${chatInfo.productId}`);
-    }}
-    className="text-xs md:text-sm px-2 py-1 md:px-3 md:py-1 rounded-full 
-               bg-white/20 backdrop-blur-sm truncate 
-               max-w-[100px] sm:max-w-[150px] md:max-w-[200px]
-               cursor-pointer transition duration-200 hover:bg-white/30"
-  >
-    {chatInfo.productTitle}
-  </div>
+          <div className="flex items-center gap-2">
+            <div
+              role="button"
+              onClick={() => {
+                console.log(`/itemlist/product/${chatInfo.productId}`)
+                navigate(`/itemlist/product/${chatInfo.productId}`)
+              }}
+              className="text-xs md:text-sm px-2 py-1 md:px-3 md:py-1 rounded-full 
+                         bg-white/20 backdrop-blur-sm truncate 
+                         max-w-[100px] sm:max-w-[150px] md:max-w-[200px]
+                         cursor-pointer transition duration-200 hover:bg-white/30"
+            >
+              {chatInfo.productTitle}
+            </div>
 
+            {/* Mark as Sold button - only show for sellers */}
+            {currentUser?.uid === chatInfo.sellerId && (
+              <>
+                {isProductSold ? (
+                  // Already sold - show sold status
+                  <div
+                    className="flex items-center gap-1.5 text-xs sm:text-sm px-3 py-2 sm:px-4 sm:py-2 
+                                 rounded-lg bg-gradient-to-r from-gray-400 to-gray-500 text-white 
+                                 shadow-md border border-gray-300/30 backdrop-blur-sm
+                                 font-medium whitespace-nowrap cursor-not-allowed opacity-75"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="flex-shrink-0"
+                    >
+                      <path d="M9 12l2 2 4-4"></path>
+                      <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                    <span className="hidden sm:inline">Already Sold</span>
+                    <span className="sm:hidden">Sold</span>
+                  </div>
+                ) : (
+                  // Not sold yet - show mark as sold button
+                  <button
+                    onClick={() => setShowMarkAsSoldModal(true)}
+                    className="flex items-center gap-1.5 text-xs sm:text-sm px-3 py-2 sm:px-4 sm:py-2 
+                               rounded-lg bg-gradient-to-r from-emerald-500 to-green-500 text-white 
+                               hover:from-emerald-600 hover:to-green-600 
+                               active:from-emerald-700 active:to-green-700
+                               shadow-lg hover:shadow-xl transform hover:scale-105 
+                               transition-all duration-200 ease-in-out
+                               border border-emerald-400/30 backdrop-blur-sm
+                               font-medium whitespace-nowrap"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="flex-shrink-0"
+                    >
+                      <path d="M9 12l2 2 4-4"></path>
+                      <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                    <span className="hidden sm:inline">Mark as Sold</span>
+                    <span className="sm:hidden">Sell</span>
+                  </button>
+                )}
+              </>
+            )}
+          </div>
         )}
       </div>
 
@@ -488,7 +601,6 @@ const ChatRoom = ({ chatId, currentUser, onBackClick, productLink }) => {
       {/* Input */}
       <div className="p-3 md:p-4 bg-white border-t border-gray-100 shadow-inner">
         <form onSubmit={sendMessage} className="flex gap-2 items-center">
-
           <label
             className={`p-2 text-gray-400 hover:text-purple-500 hover:bg-purple-50 rounded-full transition-colors cursor-pointer ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
             htmlFor="image-upload"
@@ -572,6 +684,55 @@ const ChatRoom = ({ chatId, currentUser, onBackClick, productLink }) => {
                 className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
               >
                 Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mark as Sold Confirmation Modal */}
+      {showMarkAsSoldModal && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full mx-4 transform transition-all">
+            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-emerald-100 to-green-100 rounded-full">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-emerald-600"
+              >
+                <path d="M9 12l2 2 4-4"></path>
+                <circle cx="12" cy="12" r="10"></circle>
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-center mb-2 text-gray-800">Mark as Sold</h3>
+            <p className="text-gray-600 text-center mb-6 leading-relaxed">
+              Do you want this item to be marked as sold? This item will be removed from the item list and marked as
+              unavailable.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={() => setShowMarkAsSoldModal(false)}
+                className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl text-gray-700 
+                     hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 
+                     font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={markAsSold}
+                className="flex-1 px-4 py-3 bg-gradient-to-r from-emerald-500 to-green-500 
+                     text-white rounded-xl hover:from-emerald-600 hover:to-green-600 
+                     shadow-lg hover:shadow-xl transform hover:scale-105 
+                     transition-all duration-200 font-medium"
+              >
+                Yes, Mark as Sold
               </button>
             </div>
           </div>

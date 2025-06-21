@@ -67,7 +67,7 @@ const [loading,setloading] = useState(false);
                 Connecting students through a safe, intuitive marketplace designed exclusively for university communities.
               </p>
               <a
-                href="/login"
+                href="/signup"
                 className="px-8 py-4 rounded-full bg-purple-600 text-white font-medium hover:bg-purple-700 transition-all shadow-lg hover:shadow-purple-200 hover:-translate-y-1 inline-block"
               >
                 Join Our Community
