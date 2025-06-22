@@ -223,8 +223,8 @@ export default function ProfilePage({ MyProfile }) {
     return stars
   }
 
-  const isOwnProfile = MyProfile === "true"
-  const canRate = !isOwnProfile && userId && userId !== (RouteuserId || userId)
+  const isOwnProfile = MyProfile === "true" || userId === RouteuserId
+  const canRate = !isOwnProfile && userId 
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -411,13 +411,13 @@ export default function ProfilePage({ MyProfile }) {
             </div>
 
             {/* Action Buttons - For Other Users */}
+
+
+            {/* Bug to be solved */}
             {!isOwnProfile && (
               <Card className="p-4 border-0 shadow-lg">
                 <div className="space-y-3">
-                  <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-sm sm:text-base py-3 h-auto">
-                    <MessageCircle className="h-4 w-4 mr-2 flex-shrink-0" />
-                    <span className="break-words">Message {profile?.fullName?.split(" ")[0] || "User"}</span>
-                  </Button>
+                 
 
                   <div className="grid grid-cols-2 gap-2">
                     <Button variant="outline" className="text-xs sm:text-sm py-2 h-auto">

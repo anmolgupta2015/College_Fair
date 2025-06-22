@@ -4,6 +4,7 @@ import { MapPin, Clock, Gift, Calendar, AlertTriangle, Info } from "lucide-react
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { formatTimeAgo } from "@/chatSystem/chatUtils"
 
 // Component to render the description tab content
 export default function DescriptionTab({ listing }) {
@@ -23,6 +24,8 @@ export default function DescriptionTab({ listing }) {
       return dateString
     }
   }
+
+  //console.log(listing.listedAt);
 
   return (
     <div className="space-y-6">
@@ -121,7 +124,7 @@ export default function DescriptionTab({ listing }) {
       <div className="flex flex-wrap gap-4 mt-6 pt-4 border-t border-gray-100">
         <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-full text-sm text-gray-600">
           <Clock className="h-4 w-4 text-gray-500" />
-          <span>Posted recently</span>
+          <span>{formatTimeAgo(listing.createdAt)}</span>
         </div>
 
         <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-full text-sm text-gray-600">

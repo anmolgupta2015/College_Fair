@@ -48,7 +48,7 @@ const SignupPage = () => {
             await setDoc(doc(db, "users", user.uid), {
                 fullName: userCredentials.fullName || "New User",
                 email: userCredential.user.email,
-                profilePic: "",
+                profilePic: "https://res.cloudinary.com/db8elhbqj/image/upload/v1750560498/nyt9v8clbdk6j4uo3j1k.png",
                 collegeName: "Punjab Engineering College",
                 yearofStudy: "",
                 itemsSold:0,

@@ -298,7 +298,14 @@ const ChatRoom = ({ chatId, currentUser, onBackClick, productLink }) => {
     return currentUser.uid === chatInfo.buyerId ? chatInfo.sellerName : chatInfo.buyerName
   }
 
-  const otherUserName = getOtherUserName()
+  const getId = ()=>{
+     if (!chatInfo || !currentUser) return ""
+    return currentUser.uid === chatInfo.buyerId ? chatInfo.sellerId : chatInfo.buyerId
+  }
+  
+
+  const otherUserName = getOtherUserName();
+  const Id  = getId();
   const avatarColor = getAvatarColor(otherUserName)
 
   if (loading) {
@@ -348,19 +355,19 @@ const ChatRoom = ({ chatId, currentUser, onBackClick, productLink }) => {
           )}
           <div
             className={`h-8 w-8 md:h-10 md:w-10 rounded-full bg-gradient-to-br ${avatarColor} flex items-center justify-center text-white font-medium shadow-lg`}
+             onClick={()=>{
+              navigate(`/profile/${Id}`)
+             }}
           >
             {getInitials(otherUserName)}
           </div>
           <div>
-            <h2 className="font-semibold text-base md:text-lg truncate max-w-[120px] sm:max-w-[200px] md:max-w-none">
+            <h2   onClick={()=>{
+              navigate(`/profile/${Id}`)
+             }} 
+             className="font-semibold text-base md:text-lg truncate max-w-[120px] sm:max-w-[200px] md:max-w-none">
               {otherUserName}
             </h2>
-            {chatInfo?.lastActive && (
-              <div className="flex items-center gap-1">
-                <div className="h-2 w-2 rounded-full bg-green-400"></div>
-                <p className="text-xs text-white/80">Online</p>
-              </div>
-            )}
           </div>
         </div>
 
@@ -369,7 +376,6 @@ const ChatRoom = ({ chatId, currentUser, onBackClick, productLink }) => {
             <div
               role="button"
               onClick={() => {
-                console.log(`/itemlist/product/${chatInfo.productId}`)
                 navigate(`/itemlist/product/${chatInfo.productId}`)
               }}
               className="text-xs md:text-sm px-2 py-1 md:px-3 md:py-1 rounded-full 

@@ -8,6 +8,7 @@ import Navbar from "./navbar"
 import { useParams, useNavigate } from "react-router-dom"
 import { Eye } from "lucide-react";
 
+
 export default function ProductListPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("All")

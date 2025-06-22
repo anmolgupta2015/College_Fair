@@ -36,6 +36,7 @@ export default function ListingPage() {
     donationReason: "",
     preferredRecipient: "",
     pickupInstructions: "",
+    createdAt: serverTimestamp(),
   })
 
    //console.log(formData);

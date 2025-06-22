@@ -37,7 +37,7 @@ export default function SellerDetails({ listing }) {
 
   const sellerDetails = {
     name: seller?.fullName || "Unknown Seller",
-    avatar: seller?.profileImage || "/placeholder.svg",
+    avatar: seller?.profileImage || "https://res.cloudinary.com/db8elhbqj/image/upload/v1750560498/nyt9v8clbdk6j4uo3j1k.png",
     rating: seller?.averageRating || 0,
     memberSince: seller?.createdAt?.toDate().toLocaleDateString() || "Unknown",
     responseRate: seller?.email || "Unknown",
